@@ -15,16 +15,16 @@ class WinDraw {
 
   WinDraw._internal();
 
-  WindowsTest testwin;
-  PWindow activeWindow;
+  WindowsTest? testwin;
+  PWindow? activeWindow;
   List<PWindow> windows = [];
   double windowsWidth = 0;
   double windowsHeight = 0;
   Size imageSize = Size(0, 0);
   Size outputSize = Size(0, 0);
-  FittedSizes fitsize;
-  double ratio;
-  Offset center;
+  late FittedSizes fitsize;
+  late double ratio;
+  late Offset center;
   double spaceWidth = 200;
   double spaceHeight = 200;
 
@@ -37,15 +37,15 @@ class WinDraw {
     for (var win in windows) {
       if (win.addtype == "horizontal") {
         startY = this.windowsHeight;
-        this.windowsWidth = [this.windowsWidth, win.width].reduce(max);
-        this.windowsHeight = this.windowsHeight + win.height;
+        this.windowsWidth = max(this.windowsWidth, win.width!);
+        this.windowsHeight += win.height!;
       } else if (win.addtype == "vertical") {
         startX = this.windowsWidth;
-        this.windowsWidth = this.windowsWidth + win.width;
-        this.windowsHeight = [this.windowsHeight, win.height].reduce(max);
+        this.windowsWidth += win.width!;
+        this.windowsHeight = max(this.windowsHeight, win.height!);
       } else {
-        this.windowsWidth = win.width;
-        this.windowsHeight = win.height;
+        this.windowsWidth = win.width!;
+        this.windowsHeight = win.height!;
       }
       win.start = Offset(startX, startY);
     }
@@ -59,30 +59,17 @@ class WinDraw {
         (screenSize.height - fitsize.destination.height) / 2);
   }
 
-  void testwindata() {
-    if (this.testwin == null) {
-      this.testwin = new WindowsTest();
-      this.testwin.testMakeWin();
-      //this.windows.add(this.testwin.firstWin);
-      //this.testwin.testMakeWin2();
-      //this.windows.add(this.testwin.secondWin);
-      //this.testwin.testMakeWin3();
-      //this.windows.add(this.testwin.thirdWin);
-      //this.activeWindow = this.testwin.firstWin;
-    }
-  }
+  void testwindata() {}
 
   Map<String, dynamic> toMap() {
     return {
-      'windows': windows?.map((x) => x?.toMap())?.toList(),
+      'windows': windows.map((x) => x.toMap()).toList(),
       'windowsWidth': windowsWidth,
       'windowsHeight': windowsHeight,
     };
   }
 
   fromMap(Map<String, dynamic> map) {
-    if (map == null) return;
-
     windows =
         List<PWindow>.from(map['windows']?.map((x) => PWindow.fromMap(x)));
     windowsWidth = map['windowsWidth'];

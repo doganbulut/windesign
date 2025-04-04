@@ -1,15 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:touchable/touchable.dart';
 import 'package:windesign/winentity/window.dart';
 import 'windraw.dart';
 import 'windrawhelper.dart';
 
 class WinPainter extends CustomPainter {
-  BuildContext context;
-  Size iCanvasSize;
-  PWindow pWindow;
-  List<PWindow> pWindows;
+  late BuildContext context;
+  late Size iCanvasSize;
+  late PWindow pWindow;
+  late List<PWindow> pWindows;
 
   WinPainter(BuildContext context) {
     this.context = context;
@@ -18,17 +16,15 @@ class WinPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     iCanvasSize = size;
-    //print('Size: ' + size.toString());
-    var icanvas = TouchyCanvas(this.context, canvas);
     this.pWindows = WinDraw().windows;
-    this.pWindow = WinDraw().activeWindow;
+    //this.pWindow = WinDraw().activeWindow;
     WinDraw().calculateWinSizes(iCanvasSize);
 
     for (var win in this.pWindows) {
       WinDrawHelper winHelper =
-          drawWindow(icanvas, win, WinDraw().ratio, WinDraw().center);
+          drawWindow(canvas, win, WinDraw().ratio, WinDraw().center);
       winHelper.drawSimpleCase();
-      winHelper.drawFrameMullion(win.frame);
+      winHelper.drawFrameMullion(win.frame!);
     }
   }
 
@@ -38,15 +34,15 @@ class WinPainter extends CustomPainter {
   }
 
   WinDrawHelper drawWindow(
-      TouchyCanvas pcanvas, PWindow pWindow, double ratio, Offset center) {
+      Canvas canvas, PWindow pWindow, double ratio, Offset center) {
     try {
       WinDrawHelper winHelper =
-          new WinDrawHelper(this.iCanvasSize, pcanvas, 1, ratio, center);
+          new WinDrawHelper(this.iCanvasSize, canvas, 1, ratio, center);
       winHelper.iWindow = pWindow;
       return winHelper;
     } catch (e) {
       print('Error: ' + e.toString());
-      return null;
+      return new WinDrawHelper(this.iCanvasSize, canvas, 1, ratio, center);
     }
   }
 }

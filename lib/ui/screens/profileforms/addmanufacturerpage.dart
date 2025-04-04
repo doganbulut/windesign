@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:json_form_generator/json_form_generator.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:windesign/helpers/apihelper.dart';
 import 'package:windesign/profentity/manufacturer.dart';
 import 'package:windesign/profentity/serie.dart';
@@ -8,22 +8,25 @@ import 'package:windesign/ui/localization/languagehelper.dart';
 import 'package:windesign/ui/screens/profileforms/listmanufacturerpage.dart';
 
 class AddManufacturerPage extends StatefulWidget {
+  const AddManufacturerPage({Key? key}) : super(key: key);
+
   @override
-  _AddManufacturerPage createState() => _AddManufacturerPage();
+  _AddManufacturerPageState createState() => _AddManufacturerPageState();
 }
 
-class _AddManufacturerPage extends State<AddManufacturerPage> {
-  dynamic response;
-  var _formkey = GlobalKey<FormState>();
+class _AddManufacturerPageState extends State<AddManufacturerPage> {
+  final _formKey = GlobalKey<FormBuilderState>();
+  Map<String, dynamic> response = {};
 
-  String form = json.encode([
+  List<Map<String, dynamic>> formFields = [
     {
-      "title": "name",
+      "name": "name",
       "label": LngHelper().words.lblManufacturerInfo,
       "type": "text",
-      "required": "yes"
-    }
-  ]);
+      "required": true,
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -37,60 +40,80 @@ class _AddManufacturerPage extends State<AddManufacturerPage> {
       ),
       body: Column(
         children: [
-          SingleChildScrollView(
-            child: Form(
-              key: _formkey,
-              child: Column(children: <Widget>[
-                JsonFormGenerator(
-                  form: form,
-                  onChanged: (dynamic value) {
-                    //print(value);
-                    setState(() {
-                      this.response = value;
-                    });
-                  },
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    for (var field in formFields) _buildFormField(field),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      child: Text(LngHelper().words.lblSave),
+                      onPressed: () {
+                        if (_formKey.currentState!.saveAndValidate()) {
+                          response = _formKey.currentState!.value;
+                          createData(response);
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                new ElevatedButton(
-                    child: new Text(LngHelper().words.lblSave),
-                    onPressed: () {
-                      if (_formkey.currentState.validate()) {
-                        //print(this.response.toString());
-                        createData(this.response);
-                      }
-                    })
-              ]),
+              ),
             ),
           ),
-          SizedBox(
-            height: 10,
-          ),
-          SingleChildScrollView(
-            child: new ElevatedButton(
-                child: new Text(LngHelper().words.lblManufacturerList),
-                onPressed: () async {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => ListManufacturerPage()));
-                }),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              child: Text(LngHelper().words.lblManufacturerList),
+              onPressed: () async {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => ListManufacturerPage()));
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  createData(Map response) async {
-    try {
-      MapEntry mp = response.entries
-          .firstWhere((element) => element.key == 'name', orElse: () => null);
+  Widget _buildFormField(Map<String, dynamic> field) {
+    String fieldName = field['name'];
+    String fieldType = field['type'];
+    String label = field['label'];
+    bool isRequired = field['required'] ?? false;
 
-      if (mp != null) {
+    switch (fieldType) {
+      case 'text':
+        return FormBuilderTextField(
+          name: fieldName,
+          decoration: InputDecoration(labelText: label),
+          validator: isRequired
+              ? FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                ])
+              : null,
+        );
+      // Add more field types (number, dropdown, etc.) here as needed
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  createData(Map<String, dynamic> response) async {
+    try {
+      if (response.containsKey('name')) {
         Manufacturer manufacturer =
-            // ignore: deprecated_member_use
-            new Manufacturer(name: mp.value, series: new List<Serie>());
-        ApiHelper api = new ApiHelper();
-        if (await api.postTable('manufacturer', manufacturer.toJson())) {}
+            Manufacturer(name: response['name'], series: <Serie>[]);
+        ApiHelper api = ApiHelper();
+        if (await api.postTable('manufacturer', manufacturer.toJson())) {
+          // Optionally, you can add success handling here, like showing a snackbar
+          print('Manufacturer created successfully!');
+        }
       }
     } catch (e) {
-      print(e);
+      print('Error creating manufacturer: $e');
     }
   }
 }

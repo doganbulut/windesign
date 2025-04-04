@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }
-      return null;
+      return '';
     });
   }
 
@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
       if (!mockUsers.containsKey(name)) {
         return 'Username not exists';
       }
-      return null;
+      return '';
     });
   }
 
@@ -134,13 +134,13 @@ class LoginScreen extends StatelessWidget {
       //   ),
       // ),
       userValidator: (value) {
-        if (!value.contains('@') || !value.endsWith('.com')) {
+        if (value == null || !value.contains('@') || !value.endsWith('.com')) {
           return "Email must contain '@' and end with '.com'";
         }
         return null;
       },
       passwordValidator: (value) {
-        if (value.isEmpty) {
+        if (value == null || value.isEmpty) {
           return 'Password is empty';
         }
         return null;
@@ -155,10 +155,14 @@ class LoginScreen extends StatelessWidget {
         print('Signup info');
         print('Name: ${loginData.name}');
         print('Password: ${loginData.password}');
-        return _loginUser(loginData);
+        return _loginUser(loginData as LoginData);
       },
       onSubmitAnimationCompleted: () {
-        _goToScreen(context, HomePage());
+        _goToScreen(
+            context,
+            HomePage(
+              key: UniqueKey(),
+            ));
       },
       onRecoverPassword: (name) {
         print('Recover password info');

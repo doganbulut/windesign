@@ -7,28 +7,12 @@ class PriceRow {
   String unitof;
   double unitprice;
   PriceRow({
-    this.code,
-    this.name,
-    this.type,
-    this.unitof,
-    this.unitprice,
+    required this.code,
+    required this.name,
+    required this.type,
+    required this.unitof,
+    required this.unitprice,
   });
-
-  PriceRow copyWith({
-    String code,
-    String name,
-    String type,
-    String unitof,
-    double unitprice,
-  }) {
-    return PriceRow(
-      code: code ?? this.code,
-      name: name ?? this.name,
-      type: type ?? this.type,
-      unitof: unitof ?? this.unitof,
-      unitprice: unitprice ?? this.unitprice,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -41,8 +25,6 @@ class PriceRow {
   }
 
   factory PriceRow.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return PriceRow(
       code: map['code'],
       name: map['name'],

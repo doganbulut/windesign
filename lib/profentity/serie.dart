@@ -7,10 +7,10 @@ class Serie {
   double sashMargin;
   List<Profile> profiles;
   Serie({
-    this.name,
-    this.isSliding,
-    this.sashMargin,
-    this.profiles,
+    required this.name,
+    required this.isSliding,
+    required this.sashMargin,
+    required this.profiles,
   });
 
   Map<String, dynamic> toMap() {
@@ -18,13 +18,11 @@ class Serie {
       'name': name,
       'isSliding': isSliding,
       'sashMargin': sashMargin,
-      'profiles': profiles?.map((x) => x?.toMap())?.toList(),
+      'profiles': profiles.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Serie.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Serie(
       name: map['name'],
       isSliding: map['isSliding'],

@@ -14,40 +14,16 @@ class Order {
   DateTime date;
   List<OrderWin> winOrders;
   Order({
-    this.id,
-    this.customerId,
-    this.info1,
-    this.info2,
-    this.info3,
-    this.info4,
-    this.info5,
-    this.date,
-    this.winOrders,
+    required this.id,
+    required this.customerId,
+    required this.info1,
+    required this.info2,
+    required this.info3,
+    required this.info4,
+    required this.info5,
+    required this.date,
+    required this.winOrders,
   });
-
-  Order copyWith({
-    int id,
-    int customerId,
-    String info1,
-    String info2,
-    String info3,
-    String info4,
-    String info5,
-    DateTime date,
-    List<OrderWin> winOrders,
-  }) {
-    return Order(
-      id: id ?? this.id,
-      customerId: customerId ?? this.customerId,
-      info1: info1 ?? this.info1,
-      info2: info2 ?? this.info2,
-      info3: info3 ?? this.info3,
-      info4: info4 ?? this.info4,
-      info5: info5 ?? this.info5,
-      date: date ?? this.date,
-      winOrders: winOrders ?? this.winOrders,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -58,14 +34,12 @@ class Order {
       'info3': info3,
       'info4': info4,
       'info5': info5,
-      'date': date?.millisecondsSinceEpoch,
-      'winOrders': winOrders?.map((x) => x?.toMap())?.toList(),
+      'date': date.millisecondsSinceEpoch,
+      'winOrders': winOrders.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Order.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Order(
       id: map['id'],
       customerId: map['customerId'],

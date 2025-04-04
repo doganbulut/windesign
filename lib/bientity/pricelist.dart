@@ -7,38 +7,22 @@ class PriceList {
   DateTime createDate;
   List<PriceRow> rows;
   PriceList({
-    this.name,
-    this.desciription,
-    this.createDate,
-    this.rows,
+    required this.name,
+    required this.desciription,
+    required this.createDate,
+    required this.rows,
   });
-
-  PriceList copyWith({
-    String name,
-    String desciription,
-    DateTime createDate,
-    List<PriceRow> rows,
-  }) {
-    return PriceList(
-      name: name ?? this.name,
-      desciription: desciription ?? this.desciription,
-      createDate: createDate ?? this.createDate,
-      rows: rows ?? this.rows,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'desciription': desciription,
-      'createDate': createDate?.millisecondsSinceEpoch,
-      'rows': rows?.map((x) => x?.toMap())?.toList(),
+      'createDate': createDate.millisecondsSinceEpoch,
+      'rows': rows.map((x) => x.toMap()).toList(),
     };
   }
 
   factory PriceList.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return PriceList(
       name: map['name'],
       desciription: map['desciription'],

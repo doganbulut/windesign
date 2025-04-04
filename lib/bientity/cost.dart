@@ -4,52 +4,33 @@ import 'offerunit.dart';
 class Cost {
   int id;
   String customerCode;
-  String pricelistName; //Cost
+  String pricelistName;
   int orderId;
   DateTime date;
   List<OfferUnit> units;
   double total;
   Cost({
-    this.id,
-    this.customerCode,
-    this.orderId,
-    this.date,
-    this.units,
-    this.total,
+    required this.id,
+    required this.customerCode,
+    required this.orderId,
+    required this.date,
+    required this.units,
+    required this.total,
+    required this.pricelistName,
   });
-
-  Cost copyWith({
-    int id,
-    String customerCode,
-    int orderId,
-    DateTime date,
-    List<OfferUnit> units,
-    double total,
-  }) {
-    return Cost(
-      id: id ?? this.id,
-      customerCode: customerCode ?? this.customerCode,
-      orderId: orderId ?? this.orderId,
-      date: date ?? this.date,
-      units: units ?? this.units,
-      total: total ?? this.total,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'customerCode': customerCode,
       'orderId': orderId,
-      'date': date?.millisecondsSinceEpoch,
-      'units': units?.map((x) => x?.toMap())?.toList(),
+      'date': date.millisecondsSinceEpoch,
+      'units': units.map((x) => x.toMap()).toList(),
       'total': total,
     };
   }
 
   factory Cost.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Cost(
       id: map['id'],
       customerCode: map['customerCode'],
@@ -58,6 +39,7 @@ class Cost {
       units:
           List<OfferUnit>.from(map['units']?.map((x) => OfferUnit.fromMap(x))),
       total: map['total'],
+      pricelistName: map['pricelistName'],
     );
   }
 

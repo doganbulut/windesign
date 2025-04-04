@@ -4,24 +4,14 @@ class Accessory {
   String code;
   String name;
   String type;
-  Accessory({
-    this.code,
-    this.name,
-    this.type,
-  });
   String parent; //sash,frame,win
 
-  Accessory copyWith({
-    String code,
-    String name,
-    String type,
-  }) {
-    return Accessory(
-      code: code ?? this.code,
-      name: name ?? this.name,
-      type: type ?? this.type,
-    );
-  }
+  Accessory({
+    required this.code,
+    required this.name,
+    required this.type,
+    required this.parent,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -32,12 +22,11 @@ class Accessory {
   }
 
   factory Accessory.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Accessory(
       code: map['code'],
       name: map['name'],
       type: map['type'],
+      parent: map['parent'],
     );
   }
 

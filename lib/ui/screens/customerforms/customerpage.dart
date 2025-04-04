@@ -14,11 +14,11 @@ class CustomerPageScreen extends StatefulWidget {
 }
 
 class _CustomerPageScreenState extends State<CustomerPageScreen> {
-  List<String> fields;
-  List<PlutoColumn> cols;
-  List<PlutoRow> rows;
-  List<Customer> customers;
-  PlutoGridStateManager stateManager;
+  late List<String> fields;
+  late List<PlutoColumn> cols;
+  late List<PlutoRow> rows;
+  late List<Customer> customers;
+  late PlutoGridStateManager stateManager;
 
   PlutoGridSelectingMode gridSelectingMode = PlutoGridSelectingMode.row;
 
@@ -112,7 +112,7 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
       future: getCustomerList(),
       builder: (context, AsyncSnapshot<List<Customer>> snapshot) {
         if (snapshot.hasData) {
-          customers = snapshot.data;
+          customers = snapshot.data!;
           loadColumns(fields);
           loadRows(customers);
           return Scaffold(
@@ -146,7 +146,7 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
                         DropdownButtonHideUnderline(
                           child: DropdownButton(
                             value: gridSelectingMode,
-                            items: PlutoGridStateManager.selectingModes
+                            items: PlutoGridSelectingMode.values
                                 .map<DropdownMenuItem<PlutoGridSelectingMode>>(
                                     (PlutoGridSelectingMode item) {
                               final color = gridSelectingMode == item
@@ -156,13 +156,13 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
                               return DropdownMenuItem<PlutoGridSelectingMode>(
                                 value: item,
                                 child: Text(
-                                  item.toShortString(),
+                                  item.toString().split('.').last,
                                   style: TextStyle(color: color),
                                 ),
                               );
                             }).toList(),
-                            onChanged: (PlutoGridSelectingMode mode) {
-                              setGridSelectingMode(mode);
+                            onChanged: (PlutoGridSelectingMode? mode) {
+                              setGridSelectingMode(mode!);
                             },
                           ),
                         ),
@@ -210,27 +210,27 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
 
   Customer toCustomer(PlutoRow row) {
     return new Customer(
-      code: row.cells['code'].value,
-      name: row.cells['name'].value,
-      phone: row.cells['phone'].value,
-      fax: row.cells['fax'].value,
-      email: row.cells['email'].value,
-      contactName1: row.cells['contactName1'].value,
-      contactName1Phone: row.cells['contactName1Phone'].value,
-      contactName2: row.cells['contactName2'].value,
-      contactName2Phone: row.cells['contactName2Phone'].value,
-      address1: row.cells['address1'].value,
-      address2: row.cells['address2'].value,
-      address3: row.cells['address3'].value,
-      info1: row.cells['info1'].value,
-      info2: row.cells['info2'].value,
-      info3: row.cells['info3'].value,
-      info4: row.cells['info4'].value,
-      info5: row.cells['info5'].value,
-      info6: row.cells['info6'].value,
-      info7: row.cells['info7'].value,
-      info8: row.cells['info8'].value,
-      info9: row.cells['info9'].value,
+      code: row.cells['code']?.value,
+      name: row.cells['name']?.value,
+      phone: row.cells['phone']?.value,
+      fax: row.cells['fax']?.value,
+      email: row.cells['email']?.value,
+      contactName1: row.cells['contactName1']?.value,
+      contactName1Phone: row.cells['contactName1Phone']?.value,
+      contactName2: row.cells['contactName2']?.value,
+      contactName2Phone: row.cells['contactName2Phone']?.value,
+      address1: row.cells['address1']?.value,
+      address2: row.cells['address2']?.value,
+      address3: row.cells['address3']?.value,
+      info1: row.cells['info1']?.value,
+      info2: row.cells['info2']?.value,
+      info3: row.cells['info3']?.value,
+      info4: row.cells['info4']?.value,
+      info5: row.cells['info5']?.value,
+      info6: row.cells['info6']?.value,
+      info7: row.cells['info7']?.value,
+      info8: row.cells['info8']?.value,
+      info9: row.cells['info9']?.value,
     );
   }
 
@@ -289,8 +289,4 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
     }
     return result;
   }
-
-
-
-  
 }

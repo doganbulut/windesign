@@ -1,82 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:editable/editable.dart';
 import 'package:windesign/profentity/manufacturer.dart';
 import 'package:windesign/profentity/serie.dart';
 
 class EditProfilePage extends StatefulWidget {
-  Manufacturer manufacturer;
-  String serie;
-  EditProfilePage({Key key, this.manufacturer, this.serie}) : super(key: key);
+  final Manufacturer manufacturer;
+  final String serie;
+  const EditProfilePage(
+      {Key? key, required this.manufacturer, required this.serie})
+      : super(key: key);
+
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  /// Create a Key for EditableState
   final _editableKey = GlobalKey<EditableState>();
 
-  List cols = [
-    {"title": 'Code', 'key': 'code'},
-    {"title": 'Name', 'key': 'name'},
-    {"title": 'Type', 'key': 'type'},
-    {"title": 'Height', 'key': 'height'},
-    {"title": 'Topwidth', 'key': 'topwidth'},
-    {"title": 'Width', 'key': 'width'},
+  List<Map<String, String>> cols = [
+    {"title": 'Code', "key": 'code'},
+    {"title": 'Name', "key": 'name'},
+    {"title": 'Type', "key": 'type'},
+    {"title": 'Height', "key": 'height'},
+    {"title": 'Topwidth', "key": 'topwidth'},
+    {"title": 'Width', "key": 'width'},
   ];
 
-  List rows = [
-    {
-      "code": "STKFR00001",
-      "name": "Kasa",
-      "type": "frame",
-      "height": "70",
-      "topwidth": "62",
-      "width": "41"
-    }
-  ];
+  List<Map<String, dynamic>> rows = [];
 
   void _addNewRow() {
     setState(() {
-      _editableKey.currentState.createRow();
+      _editableKey.currentState?.createRow();
     });
   }
 
-  ///Print only edited rows.
   void _printEditedRows() {
-    List editedRows = _editableKey.currentState.editedRows;
+    List editedRows = _editableKey.currentState?.editedRows ?? [];
     print(editedRows);
   }
 
   @override
   Widget build(BuildContext context) {
-    var profiles = widget.manufacturer.series
-        .firstWhere((e) => e.name == widget.serie)
-        .profiles;
+    final serie = widget.manufacturer.series.firstWhere(
+      (e) => e.name == widget.serie,
+      orElse: () =>
+          Serie(name: '', profiles: [], isSliding: false, sashMargin: 0),
+    );
 
-    rows.clear();
-
-    for (var profile in profiles) {
-      rows.add(profile.toMap());
-    }
+    rows = serie.profiles.map((profile) => profile.toMap()).toList();
 
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 200,
-        leading: FlatButton.icon(
-            onPressed: () => _addNewRow(),
-            icon: Icon(Icons.add),
-            label: Text(
+        leading: TextButton.icon(
+            onPressed: _addNewRow,
+            icon: const Icon(Icons.add),
+            label: const Text(
               'Add',
               style: TextStyle(fontWeight: FontWeight.bold),
             )),
-        title: Text("Profiles"),
+        title: const Text("Profiles"),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: FlatButton(
-                onPressed: () => _printEditedRows(),
-                child: Text('Print Edited Rows',
+            child: TextButton(
+                onPressed: _printEditedRows,
+                child: const Text('Print Edited Rows',
                     style: TextStyle(fontWeight: FontWeight.bold))),
           )
         ],
@@ -87,9 +76,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         rows: rows,
         onRowSaved: (value) {
           print(value);
+          //TODO: Save data
         },
         onSubmitted: (value) {
           print(value);
+          //TODO: Save data
         },
         thAlignment: TextAlign.center,
         thPaddingBottom: 3,

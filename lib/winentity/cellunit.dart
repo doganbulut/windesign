@@ -8,23 +8,22 @@ class CellUnit {
   double unitHeight;
   double unitWidth;
   CellUnit({
-    this.name,
-    this.type,
-    this.typeName,
-    this.unitprice,
-    this.unitHeight,
-    this.unitWidth,
+    required this.name,
+    required this.type,
+    required this.typeName,
+    required this.unitprice,
+    required this.unitHeight,
+    required this.unitWidth,
   });
 
   CellUnit.create(String type, String typeName, String name, double cellHeight,
-      double cellWidth, double price) {
-    this.type = type;
-    this.typeName = typeName;
-    this.name = name;
-    this.unitHeight = cellHeight - 10;
-    this.unitWidth = cellWidth - 10;
-    this.unitprice = (unitHeight * unitWidth) * price;
-  }
+      double cellWidth, double price)
+      : this.type = type,
+        this.typeName = typeName,
+        this.name = name,
+        this.unitHeight = cellHeight - 10,
+        this.unitWidth = cellWidth - 10,
+        this.unitprice = (cellHeight - 10) * (cellWidth - 10) * price;
 
   @override
   String toString() {
@@ -54,8 +53,6 @@ class CellUnit {
   }
 
   factory CellUnit.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return CellUnit(
       name: map['name'],
       type: map['type'],

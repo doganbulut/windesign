@@ -23,27 +23,27 @@ class Customer {
   String info8;
   String info9;
   Customer({
-    this.code,
-    this.name,
-    this.phone,
-    this.fax,
-    this.email,
-    this.contactName1,
-    this.contactName1Phone,
-    this.contactName2,
-    this.contactName2Phone,
-    this.address1,
-    this.address2,
-    this.address3,
-    this.info1,
-    this.info2,
-    this.info3,
-    this.info4,
-    this.info5,
-    this.info6,
-    this.info7,
-    this.info8,
-    this.info9,
+    required this.code,
+    required this.name,
+    required this.phone,
+    required this.fax,
+    required this.email,
+    required this.contactName1,
+    required this.contactName1Phone,
+    required this.contactName2,
+    required this.contactName2Phone,
+    required this.address1,
+    required this.address2,
+    required this.address3,
+    required this.info1,
+    required this.info2,
+    required this.info3,
+    required this.info4,
+    required this.info5,
+    required this.info6,
+    required this.info7,
+    required this.info8,
+    required this.info9,
   });
 
   Map<String, dynamic> toMap() {
@@ -73,8 +73,6 @@ class Customer {
   }
 
   factory Customer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Customer(
       code: map['code'],
       name: map['name'],

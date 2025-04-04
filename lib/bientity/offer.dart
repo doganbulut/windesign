@@ -12,49 +12,24 @@ class Offer {
   double discountAmount;
   double total;
   Offer({
-    this.id,
-    this.customerCode,
-    this.pricelistName,
-    this.orderId,
-    this.date,
-    this.units,
-    this.discountPercent,
-    this.discountAmount,
-    this.total,
+    required this.id,
+    required this.customerCode,
+    required this.pricelistName,
+    required this.orderId,
+    required this.date,
+    required this.units,
+    required this.discountPercent,
+    required this.discountAmount,
+    required this.total,
   });
-
-  Offer copyWith({
-    int id,
-    String customerCode,
-    String pricelistName,
-    int orderId,
-    DateTime date,
-    List<OfferUnit> units,
-    double discountPercent,
-    double discountAmount,
-    double total,
-  }) {
-    return Offer(
-      id: id ?? this.id,
-      customerCode: customerCode ?? this.customerCode,
-      pricelistName: pricelistName ?? this.pricelistName,
-      orderId: orderId ?? this.orderId,
-      date: date ?? this.date,
-      units: units ?? this.units,
-      discountPercent: discountPercent ?? this.discountPercent,
-      discountAmount: discountAmount ?? this.discountAmount,
-      total: total ?? this.total,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'customerCode': customerCode,
       'pricelistName': pricelistName,
       'orderId': orderId,
-      'date': date?.millisecondsSinceEpoch,
-      'units': units?.map((x) => x?.toMap())?.toList(),
+      'date': date.millisecondsSinceEpoch,
+      'units': units.map((x) => x.toMap()).toList(),
       'discountPercent': discountPercent,
       'discountAmount': discountAmount,
       'total': total,
@@ -62,8 +37,6 @@ class Offer {
   }
 
   factory Offer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Offer(
       id: map['id'],
       customerCode: map['customerCode'],

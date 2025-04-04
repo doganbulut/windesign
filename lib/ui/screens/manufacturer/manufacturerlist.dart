@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:windesign/helpers/apihelper.dart';
 import 'package:windesign/profentity/manufacturer.dart';
@@ -12,11 +11,11 @@ class ManufacturerListScreen extends StatefulWidget {
 }
 
 class _ManufacturerListScreenState extends State<ManufacturerListScreen> {
-  PlutoGridStateManager stateManager;
+  late PlutoGridStateManager stateManager;
 
-  List<PlutoColumn> cols;
-  List<PlutoRow> rows;
-  List<Manufacturer> manufacturers;
+  late List<PlutoColumn> cols;
+  late List<PlutoRow> rows;
+  late List<Manufacturer> manufacturers;
 
   @override
   initState() {
@@ -37,7 +36,7 @@ class _ManufacturerListScreenState extends State<ManufacturerListScreen> {
       future: getManufacurerList(),
       builder: (context, AsyncSnapshot<List<Manufacturer>> snapshot) {
         if (snapshot.hasData) {
-          manufacturers = snapshot.data;
+          manufacturers = snapshot.data!;
           loadRows(manufacturers);
           return Scaffold(
             appBar: AppBar(

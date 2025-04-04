@@ -15,25 +15,29 @@ class Part {
   Profile profile;
   List<Accessory> accessories;
   Part({
-    this.profileCode,
-    this.leftAngle,
-    this.rightAngle,
-    this.len,
-    this.inlen,
-    this.cutlen,
-    this.leftEar,
-    this.rightEar,
-    this.profile,
-    this.accessories,
+    required this.profileCode,
+    required this.leftAngle,
+    required this.rightAngle,
+    required this.len,
+    this.inlen = 0,
+    this.cutlen = 0,
+    this.leftEar = 0,
+    this.rightEar = 0,
+    required this.profile,
+    this.accessories = const [],
   });
 
-  Part.create(
-      double leftAngle, double rightAngle, double len, Profile profile) {
-    this.profileCode = profile.code;
-    this.leftAngle = leftAngle;
-    this.rightAngle = rightAngle;
-    this.len = len;
-    this.profile = profile;
+  Part.create(double leftAngle, double rightAngle, double len, Profile profile)
+      : profileCode = profile.code,
+        leftAngle = leftAngle,
+        rightAngle = rightAngle,
+        len = len,
+        inlen = 0,
+        cutlen = 0,
+        leftEar = 0,
+        rightEar = 0,
+        profile = profile,
+        accessories = [] {
     calculateInLen();
   }
 
@@ -64,34 +68,8 @@ class Part {
   }
 
   double round(double value, int places) {
-    double mod = math.pow(10.0, places);
+    double mod = math.pow(10.0, places).toDouble();
     return ((value * mod).round().toDouble() / mod);
-  }
-
-  Part copyWith({
-    String profileCode,
-    double leftAngle,
-    double rightAngle,
-    double len,
-    double inlen,
-    double cutlen,
-    double leftEar,
-    double rightEar,
-    Profile profile,
-    List<Accessory> accessories,
-  }) {
-    return Part(
-      profileCode: profileCode ?? this.profileCode,
-      leftAngle: leftAngle ?? this.leftAngle,
-      rightAngle: rightAngle ?? this.rightAngle,
-      len: len ?? this.len,
-      inlen: inlen ?? this.inlen,
-      cutlen: cutlen ?? this.cutlen,
-      leftEar: leftEar ?? this.leftEar,
-      rightEar: rightEar ?? this.rightEar,
-      profile: profile ?? this.profile,
-      accessories: accessories ?? this.accessories,
-    );
   }
 
   Map<String, dynamic> toMap() {
@@ -104,14 +82,12 @@ class Part {
       'cutlen': cutlen,
       'leftEar': leftEar,
       'rightEar': rightEar,
-      'profile': profile?.toMap(),
-      'accessories': accessories?.map((x) => x?.toMap())?.toList(),
+      'profile': profile.toMap(),
+      'accessories': accessories.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Part.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Part(
       profileCode: map['profileCode'],
       leftAngle: map['leftAngle'],

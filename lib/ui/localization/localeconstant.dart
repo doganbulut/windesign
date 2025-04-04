@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 String languageCode = "tr";
@@ -12,7 +11,7 @@ Future<Locale> getLocale() async {
 }
 
 Locale _locale(String languageCode) {
-  return languageCode != null && languageCode.isNotEmpty
+  return languageCode.isNotEmpty
       ? Locale(languageCode, '')
       : Locale('tr', 'TR');
 }

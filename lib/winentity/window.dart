@@ -5,20 +5,24 @@ import 'part.dart';
 import 'wincell.dart';
 
 class PWindow {
-  int order;
-  int count;
-  double width;
-  double height;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  String info6;
-  String info7;
-  Wincell frame;
-  String addtype;
-  Offset start;
+  static const double defaultPartAngle1 = 45.0;
+  static const double defaultPartAngle2 = 135.0;
+
+  int? order;
+  int? count;
+  double? width;
+  double? height;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  String? info6;
+  String? info7;
+  Wincell? frame;
+  String? addtype;
+  Offset? start;
+
   PWindow({
     this.order,
     this.count,
@@ -31,9 +35,9 @@ class PWindow {
     this.info5,
     this.info6,
     this.info7,
-    this.frame,
     this.addtype,
     this.start,
+    this.frame,
   });
 
   PWindow.create(
@@ -42,45 +46,48 @@ class PWindow {
     this.count = count;
     this.width = width;
     this.height = height;
-    this.addtype = "";
-    this.start = Offset.zero;
+    addtype = "";
+    start = Offset.zero;
 
-    frame = new Wincell.create('1');
-    //left
-    frame.left = new Part.create(45, 135, this.height, frameProfile);
-    //right
-    frame.right = new Part.create(45, 135, this.height, frameProfile);
-    //top
-    frame.top = new Part.create(45, 135, this.width, frameProfile);
-    //bottom
-    frame.bottom = new Part.create(45, 135, this.width, frameProfile);
+    // Create frame parts
+    frame = Wincell(
+        id: "0",
+        left: _createFramePart(frameProfile, this.height ?? 0),
+        right: _createFramePart(frameProfile, this.height ?? 0),
+        top: _createFramePart(frameProfile, this.width ?? 0),
+        bottom: _createFramePart(frameProfile, this.width ?? 0),
+        xPoint: 0,
+        yPoint: 0,
+        innerWidth: 0,
+        innerHeight: 0);
 
-    frame.inHeight = frame.left.inlen;
-    frame.inWidth = frame.top.inlen;
-    frame.xPoint = frame.top.leftEar;
-    frame.yPoint = frame.left.leftEar;
+    _calculateFrameDimensions();
+  }
+
+  Part _createFramePart(Profile profile, double length) {
+    return Part.create(defaultPartAngle1, defaultPartAngle2, length, profile);
+  }
+
+  void _calculateFrameDimensions() {
+    frame?.innerHeight = frame!.left.inlen;
+    frame?.innerWidth = frame!.top.inlen;
+    frame?.xPoint = frame!.top.leftEar;
+    frame?.yPoint = frame!.left.leftEar;
   }
 
   bool calculateWinParts() {
-    try {
-      frame.left.len = this.height;
-      frame.left.calculateInLen();
-      frame.right.len = this.height;
-      frame.right.calculateInLen();
-      frame.top.len = this.width;
-      frame.top.calculateInLen();
-      frame.bottom.len = this.width;
-      frame.bottom.calculateInLen();
+    frame?.left.len = height!;
+    frame?.left.calculateInLen();
+    frame?.right.len = height!;
+    frame?.right.calculateInLen();
+    frame?.top.len = width!;
+    frame?.top.calculateInLen();
+    frame?.bottom.len = width!;
+    frame?.bottom.calculateInLen();
 
-      frame.inHeight = frame.left.inlen;
-      frame.inWidth = frame.top.inlen;
-      frame.xPoint = frame.top.leftEar;
-      frame.yPoint = frame.left.leftEar;
+    _calculateFrameDimensions();
 
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return true;
   }
 
   Map<String, dynamic> toMap() {
@@ -98,13 +105,20 @@ class PWindow {
       'info7': info7,
       'frame': frame?.toMap(),
       'addtype': addtype,
-      'start': start?.dx.toString() + ':' + start?.dy.toString(),
+      'start': '${start?.dx}:${start?.dy}',
     };
   }
 
   factory PWindow.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-    var offsets = map['start'].toString().split(':');
+    final String? startString = map['start']?.toString();
+    Offset? startOffset;
+    if (startString != null) {
+      final List<String> offsets = startString.split(':');
+      if (offsets.length == 2) {
+        startOffset =
+            Offset(double.parse(offsets[0]), double.parse(offsets[1]));
+      }
+    }
 
     return PWindow(
       order: map['order'],
@@ -120,7 +134,7 @@ class PWindow {
       info7: map['info7'],
       frame: Wincell.fromMap(map['frame']),
       addtype: map['addtype'],
-      start: new Offset(double.parse(offsets[0]), double.parse(offsets[1])),
+      start: startOffset,
     );
   }
 

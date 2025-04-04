@@ -14,7 +14,7 @@ class ApiHelper {
       final url = 'https://$host:$port/api/rpc?table=$table&jsondata=$jsondata';
 
       final response = await http.post(
-        url,
+        Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*"
@@ -38,7 +38,7 @@ class ApiHelper {
       final url = 'https://${host}:${port}/api/rpc/GetAll/${table}';
 
       final response = await http.get(
-        url,
+        Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*"

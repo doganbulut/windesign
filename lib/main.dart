@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:windesign/winentity/windows_test.dart';
 import 'ui/localization/languagehelper.dart';
 import 'ui/screens/mainlayout.dart';
-import 'ui/screens/manufacturer/manufacturerlist.dart';
 import 'windrawer/windraw.dart';
 
 /// main is entry point of Flutter application
 void main() {
   LngHelper().initLanguage('tr');
-  WinDraw().testwindata();
+  WindowsTest().testMakeWin();
+  //WindowsTest().testMakeWin2();
+  //WindowsTest().testMakeWin3();
+  //WinDraw().testwindata();
   return runApp(MyApp());
 }
 
@@ -15,16 +18,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(accentColor: Colors.red),
+      theme: ThemeData.light().copyWith(
+          colorScheme:
+              ColorScheme.fromSwatch().copyWith(secondary: Colors.red)),
       debugShowCheckedModeBanner: false,
-      home: ManufacturerListScreen(),
+      home: HomePage(key: UniqueKey()),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({
-    Key key,
+    required Key key,
   }) : super(key: key);
 
   @override
