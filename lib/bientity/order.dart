@@ -1,18 +1,16 @@
-//Customer order
-//all drawing
 import 'dart:convert';
 import 'package:windesign/bientity/orderWin.dart';
 
 class Order {
-  int id;
-  int customerId;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  DateTime date;
-  List<OrderWin> winOrders;
+  int? id;
+  int? customerId;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  DateTime? date;
+  List<OrderWin>? winOrders;
   Order({
     this.id,
     this.customerId,
@@ -26,15 +24,15 @@ class Order {
   });
 
   Order copyWith({
-    int id,
-    int customerId,
-    String info1,
-    String info2,
-    String info3,
-    String info4,
-    String info5,
-    DateTime date,
-    List<OrderWin> winOrders,
+    int? id,
+    int? customerId,
+    String? info1,
+    String? info2,
+    String? info3,
+    String? info4,
+    String? info5,
+    DateTime? date,
+    List<OrderWin>? winOrders,
   }) {
     return Order(
       id: id ?? this.id,
@@ -59,24 +57,26 @@ class Order {
       'info4': info4,
       'info5': info5,
       'date': date?.millisecondsSinceEpoch,
-      'winOrders': winOrders?.map((x) => x?.toMap())?.toList(),
+      'winOrders': winOrders?.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Order.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Order(
-      id: map['id'],
-      customerId: map['customerId'],
-      info1: map['info1'],
-      info2: map['info2'],
-      info3: map['info3'],
-      info4: map['info4'],
-      info5: map['info5'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      winOrders: List<OrderWin>.from(
-          map['winOrders']?.map((x) => OrderWin.fromMap(x))),
+      id: map['id'] as int?,
+      customerId: map['customerId'] as int?,
+      info1: map['info1'] as String?,
+      info2: map['info2'] as String?,
+      info3: map['info3'] as String?,
+      info4: map['info4'] as String?,
+      info5: map['info5'] as String?,
+      date: map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'] as int)
+          : null,
+      winOrders: map['winOrders'] != null
+          ? List<OrderWin>.from(
+              map['winOrders']?.map((x) => OrderWin.fromMap(x)) as Iterable)
+          : null,
     );
   }
 

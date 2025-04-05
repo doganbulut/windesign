@@ -1,22 +1,22 @@
 import 'dart:convert';
-import 'package:windesign/winentity/window.dart';
+import 'package:windesign/winentity/windowobject.dart';
 
 class OrderWin {
-  String pose;
-  int count;
-  double windowsWidth = 0;
-  double windowsHeight = 0;
-  String productinfo1;
-  String productinfo2;
-  String productinfo3;
-  String productinfo4;
-  String productinfo5;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  List<PWindow> win;
+  String? pose;
+  int? count;
+  double? windowsWidth;
+  double? windowsHeight;
+  String? productinfo1;
+  String? productinfo2;
+  String? productinfo3;
+  String? productinfo4;
+  String? productinfo5;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  List<WindowObject>? win;
   OrderWin({
     this.pose,
     this.count,
@@ -36,21 +36,21 @@ class OrderWin {
   });
 
   OrderWin copyWith({
-    String pose,
-    int count,
-    double windowsWidth,
-    double windowsHeight,
-    String productinfo1,
-    String productinfo2,
-    String productinfo3,
-    String productinfo4,
-    String productinfo5,
-    String info1,
-    String info2,
-    String info3,
-    String info4,
-    String info5,
-    List<PWindow> win,
+    String? pose,
+    int? count,
+    double? windowsWidth,
+    double? windowsHeight,
+    String? productinfo1,
+    String? productinfo2,
+    String? productinfo3,
+    String? productinfo4,
+    String? productinfo5,
+    String? info1,
+    String? info2,
+    String? info3,
+    String? info4,
+    String? info5,
+    List<WindowObject>? win,
   }) {
     return OrderWin(
       pose: pose ?? this.pose,
@@ -87,29 +87,30 @@ class OrderWin {
       'info3': info3,
       'info4': info4,
       'info5': info5,
-      'win': win?.map((x) => x?.toMap())?.toList(),
+      'win': win?.map((x) => x.toMap()).toList(),
     };
   }
 
   factory OrderWin.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return OrderWin(
-      pose: map['pose'],
-      count: map['count'],
-      windowsWidth: map['windowsWidth'],
-      windowsHeight: map['windowsHeight'],
-      productinfo1: map['productinfo1'],
-      productinfo2: map['productinfo2'],
-      productinfo3: map['productinfo3'],
-      productinfo4: map['productinfo4'],
-      productinfo5: map['productinfo5'],
-      info1: map['info1'],
-      info2: map['info2'],
-      info3: map['info3'],
-      info4: map['info4'],
-      info5: map['info5'],
-      win: List<PWindow>.from(map['win']?.map((x) => PWindow.fromMap(x))),
+      pose: map['pose'] as String?,
+      count: map['count'] as int?,
+      windowsWidth: map['windowsWidth'] as double?,
+      windowsHeight: map['windowsHeight'] as double?,
+      productinfo1: map['productinfo1'] as String?,
+      productinfo2: map['productinfo2'] as String?,
+      productinfo3: map['productinfo3'] as String?,
+      productinfo4: map['productinfo4'] as String?,
+      productinfo5: map['productinfo5'] as String?,
+      info1: map['info1'] as String?,
+      info2: map['info2'] as String?,
+      info3: map['info3'] as String?,
+      info4: map['info4'] as String?,
+      info5: map['info5'] as String?,
+      win: map['win'] != null
+          ? List<WindowObject>.from(
+              map['win']?.map((x) => WindowObject.fromMap(x)) as Iterable)
+          : null,
     );
   }
 

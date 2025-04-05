@@ -4,30 +4,37 @@ import 'cellunit.dart';
 import 'part.dart';
 import 'profile_test.dart';
 import 'wincell.dart';
-import 'window.dart';
+import 'windowobject.dart';
 
 class WindowsTest {
   List<Part> cuttingParts = [];
   List<CellUnit> cellUnits = [];
-  PWindow firstWin;
-  PWindow secondWin;
-  PWindow thirdWin;
-  ProfileTest profilemock;
-  Profile frameProfile;
-  Profile mullionProfile;
-  Profile sashProfile;
+  late WindowObject firstWin;
+  late WindowObject secondWin;
+  late WindowObject thirdWin;
+  late ProfileTest profilemock;
+  late Profile frameProfile;
+  late Profile mullionProfile;
+  late Profile sashProfile;
 
   void testMakeWin() {
-    profilemock = new ProfileTest();
+    profilemock = ProfileTest();
     profilemock.createData();
 
-    var profiles = profilemock.manufacturer.series
+    final profiles = profilemock.manufacturer.series
         .firstWhere((element) => element.name == "Carizma")
         .profiles;
 
     frameProfile = profiles.firstWhere((element) => element.type == "frame");
 
-    firstWin = PWindow.create(1, 1, frameProfile, 2721, 1276);
+    firstWin = WindowObject(order: 1, count: 1, width: 2721, height: 1276, frame: frame, frameProfile: frameProfile, start: start)
+    
+    WindowObject.create(
+        order: 1,
+        count: 1,
+        frameProfile: frameProfile,
+        width: 2721,
+        height: 1276);
 
     mullionProfile =
         profiles.firstWhere((element) => element.type == "mullion");
@@ -35,9 +42,7 @@ class WindowsTest {
     sashProfile = profiles.firstWhere((element) => element.type == "sash");
 
     //firstWin.frame.addVerticalCenterMullion(mullionProfile, 1);
-    List<double> muls = [];
-    muls.add(700);
-    muls.add(2021);
+    final List<double> muls = [700, 2021];
     firstWin.frame.addVerticalMullion(mullionProfile, muls);
     //firstWin.frame.addHorizontalMullion(mullionProfile, muls);
     firstWin.frame.computeCells();
@@ -50,34 +55,6 @@ class WindowsTest {
     firstWin.frame.cells[2]
         .createSashCell(sashProfile, "left", 8, "cam01", "çift cam", 90);
 
-    //List<double> muls2 = new List<double>();
-    //muls2.add(400);
-
-    //firstWin.frame.cells[0].addHorizontalMullion(mullionProfile, muls2);
-    //firstWin.frame.cells[0].computeCells();
-
-    //List<double> muls3 = new List<double>();
-    //muls3.add(400);
-
-    //firstWin.frame.cells[1].addHorizontalMullion(mullionProfile, muls3);
-    //firstWin.frame.cells[1].computeCells();
-
-    //List<double> muls4 = new List<double>();
-    //muls4.add(400);
-
-    //firstWin.frame.cells[2].addHorizontalMullion(mullionProfile, muls4);
-    //firstWin.frame.cells[2].computeCells();
-
-    //firstWin.frame.cells[0].cells[0].createCellUnit("cam01", "Çift Cam", 90);
-    //firstWin.frame.cells[0].cells[1].createCellUnit("cam01", "Çift Cam", 90);
-
-    //firstWin.frame.cells[1].cells[0].createCellUnit("cam01", "Çift Cam", 90);
-    //firstWin.frame.cells[1].cells[1]
-    //    .createSashCell(sashProfile, 8, "cam02", "Çift Cam", 90);
-
-    //firstWin.frame.cells[2].cells[0].createCellUnit("cam01", "Çift Cam", 90);
-    //firstWin.frame.cells[2].cells[1].createCellUnit("cam01", "Çift Cam", 90);
-
     cellUnits.clear();
     cuttingParts.clear();
     cuttingParts.add(firstWin.frame.left);
@@ -86,35 +63,29 @@ class WindowsTest {
     cuttingParts.add(firstWin.frame.bottom);
 
     print("Ana Pencere Orta Kayıtları");
-    for (var m1 in firstWin.frame.mullions) {
+    for (final m1 in firstWin.frame.mullions) {
       cuttingParts.add(m1.part);
       print(m1.toString());
     }
 
     print("Hücreler");
-    for (var c1 in firstWin.frame.cells) {
+    for (final c1 in firstWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
+      print(c1.unit);
+      print(c1.sash);
+      print(c1.sash.unit);
     }
 
     print("Kesim Listesi");
-    for (var part in cuttingParts) {
+    for (final part in cuttingParts) {
       part.calculateCutLen(6);
-      print("Kesim Uzunluk: " +
-          part.cutlen.toString() +
-          " Uzunluk: " +
-          part.len.toString() +
-          " Profil:" +
-          part.profile.name);
+      print(
+          "Kesim Uzunluk: ${part.cutlen} Uzunluk: ${part.len} Profil:${part.profile.name}");
     }
 
     print("Cam Listesi");
-    for (var cellUnit in cellUnits) {
+    for (final cellUnit in cellUnits) {
       print(cellUnit);
     }
 
@@ -122,23 +93,27 @@ class WindowsTest {
   }
 
   void testMakeWin2() {
-    ProfileTest profilemock = new ProfileTest();
+    profilemock = ProfileTest();
     profilemock.createData();
 
-    var profiles = profilemock.manufacturer.series
+    final profiles = profilemock.manufacturer.series
         .firstWhere((element) => element.name == "Carizma")
         .profiles;
 
-    var frameProfile =
-        profiles.firstWhere((element) => element.type == "frame");
+    frameProfile = profiles.firstWhere((element) => element.type == "frame");
 
-    secondWin = PWindow.create(1, 1, frameProfile, 760, 1260);
+    secondWin = WindowObject.create(
+        order: 1,
+        count: 1,
+        frameProfile: frameProfile,
+        width: 760,
+        height: 1260);
     secondWin.addtype = "";
 
-    var mullionProfile =
+    mullionProfile =
         profiles.firstWhere((element) => element.type == "mullion");
 
-    var sashProfile = profiles.firstWhere((element) => element.type == "sash");
+    sashProfile = profiles.firstWhere((element) => element.type == "sash");
     secondWin.frame.computeCells();
 
     secondWin.frame
@@ -152,35 +127,29 @@ class WindowsTest {
     cuttingParts.add(secondWin.frame.bottom);
 
     print("Ana Pencere Orta Kayıtları");
-    for (var m1 in secondWin.frame.mullions) {
+    for (final m1 in secondWin.frame.mullions) {
       cuttingParts.add(m1.part);
       print(m1.toString());
     }
 
     print("Hücreler");
-    for (var c1 in secondWin.frame.cells) {
+    for (final c1 in secondWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
+      print(c1.unit);
+      print(c1.sash);
+      print(c1.sash.unit);
     }
 
     print("Kesim Listesi");
-    for (var part in cuttingParts) {
+    for (final part in cuttingParts) {
       part.calculateCutLen(6);
-      print("Kesim Uzunluk: " +
-          part.cutlen.toString() +
-          " Uzunluk: " +
-          part.len.toString() +
-          " Profil:" +
-          part.profile.name);
+      print(
+          "Kesim Uzunluk: ${part.cutlen} Uzunluk: ${part.len} Profil:${part.profile.name}");
     }
 
     print("Cam Listesi");
-    for (var cellUnit in cellUnits) {
+    for (final cellUnit in cellUnits) {
       print(cellUnit);
     }
 
@@ -188,23 +157,27 @@ class WindowsTest {
   }
 
   void testMakeWin3() {
-    ProfileTest profilemock = new ProfileTest();
+    profilemock = ProfileTest();
     profilemock.createData();
 
-    var profiles = profilemock.manufacturer.series
+    final profiles = profilemock.manufacturer.series
         .firstWhere((element) => element.name == "Carizma")
         .profiles;
 
-    var frameProfile =
-        profiles.firstWhere((element) => element.type == "frame");
+    frameProfile = profiles.firstWhere((element) => element.type == "frame");
 
-    thirdWin = PWindow.create(1, 1, frameProfile, 700, 2000);
+    thirdWin = WindowObject.create(
+        order: 1,
+        count: 1,
+        frameProfile: frameProfile,
+        width: 700,
+        height: 2000);
     thirdWin.addtype = "vertical";
 
-    var mullionProfile =
+    mullionProfile =
         profiles.firstWhere((element) => element.type == "mullion");
 
-    var sashProfile = profiles.firstWhere((element) => element.type == "sash");
+    sashProfile = profiles.firstWhere((element) => element.type == "sash");
 
     thirdWin.frame.computeCells();
 
@@ -219,63 +192,53 @@ class WindowsTest {
     cuttingParts.add(thirdWin.frame.bottom);
 
     print("Ana Pencere Orta Kayıtları");
-    for (var m1 in thirdWin.frame.mullions) {
+    for (final m1 in thirdWin.frame.mullions) {
       cuttingParts.add(m1.part);
       print(m1.toString());
     }
 
     print("Hücreler");
-    for (var c1 in thirdWin.frame.cells) {
+    for (final c1 in thirdWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
+      print(c1.unit);
+      print(c1.sash);
+      print(c1.sash.unit);
     }
 
     print("Kesim Listesi");
-    for (var part in cuttingParts) {
+    for (final part in cuttingParts) {
       part.calculateCutLen(6);
-      print("Kesim Uzunluk: " +
-          part.cutlen.toString() +
-          " Uzunluk: " +
-          part.len.toString() +
-          " Profil:" +
-          part.profile.name);
+      print(
+          "Kesim Uzunluk: ${part.cutlen} Uzunluk: ${part.len} Profil:${part.profile.name}");
     }
 
     print("Cam Listesi");
-    for (var cellUnit in cellUnits) {
+    for (final cellUnit in cellUnits) {
       print(cellUnit);
     }
 
     return;
   }
 
-  printCell(Wincell cell) {
-    if (cell.cells.length != 0) {
-      for (var mullion in cell.mullions) {
+  void printCell(Wincell cell) {
+    if (cell.cells.isNotEmpty) {
+      for (final mullion in cell.mullions) {
         cuttingParts.add(mullion.part);
         print(mullion.toString());
       }
-      for (var icell in cell.cells) {
+      for (final icell in cell.cells) {
         print(icell);
         printCell(icell);
-        if (icell.unit != null) {
-          cellUnits.add(icell.unit);
-          print(icell.unit);
-        }
-        if (icell.sash != null) {
-          cuttingParts.add(icell.sash.left);
-          cuttingParts.add(icell.sash.right);
-          cuttingParts.add(icell.sash.top);
-          cuttingParts.add(icell.sash.bottom);
-          print(icell.sash);
-          cellUnits.add(icell.sash.unit);
-          print(icell.sash.unit);
-        }
+        cellUnits.add(icell.unit);
+        print(icell.unit);
+        cuttingParts.add(icell.sash.left);
+        cuttingParts.add(icell.sash.right);
+        cuttingParts.add(icell.sash.top);
+        cuttingParts.add(icell.sash.bottom);
+        print(icell.sash);
+        cellUnits.add(icell.sash.unit);
+        print(icell.sash.unit);
       }
     }
   }

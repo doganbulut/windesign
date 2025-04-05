@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:windesign/ui/localization/languagehelper.dart';
-import 'package:windesign/ui/screens/windraw_view.dart';
+import 'package:windesign/ui/screens/drawscreen.dart';
 
 class LayoutMain extends StatelessWidget {
   @override
@@ -8,7 +8,7 @@ class LayoutMain extends StatelessWidget {
     return Scaffold(
       //title: Text(LngHelper().words.appName),
       drawer: getLeftMenu(),
-      body: WinDrawView(),
+      body: DrawScreen(),
     );
   }
 

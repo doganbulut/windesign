@@ -1,15 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:touchable/touchable.dart';
-import 'package:windesign/winentity/window.dart';
-import 'windraw.dart';
-import 'windrawhelper.dart';
+import 'package:windesign/windrawer/drawcontainer.dart';
+import 'package:windesign/winentity/windowobject.dart';
+import 'drawhelper.dart';
 
 class WinPainter extends CustomPainter {
-  BuildContext context;
-  Size iCanvasSize;
-  PWindow pWindow;
-  List<PWindow> pWindows;
+  late BuildContext context;
+  late Size canvasSize;
+  late WindowObject activeWindow;
+  late List<WindowObject> windowList;
 
   WinPainter(BuildContext context) {
     this.context = context;
@@ -17,18 +15,17 @@ class WinPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    iCanvasSize = size;
+    canvasSize = size;
     //print('Size: ' + size.toString());
-    var icanvas = TouchyCanvas(this.context, canvas);
-    this.pWindows = WinDraw().windows;
-    this.pWindow = WinDraw().activeWindow;
-    WinDraw().calculateWinSizes(iCanvasSize);
+    this.windowList = DrawContainer().windows;
+    this.activeWindow = DrawContainer().activeWindow!;
+    DrawContainer().calculateWinSizes(canvasSize);
 
-    for (var win in this.pWindows) {
-      WinDrawHelper winHelper =
-          drawWindow(icanvas, win, WinDraw().ratio, WinDraw().center);
+    for (var win in this.windowList) {
+      DrawHelper winHelper = drawWindow(
+          canvas, win, DrawContainer().ratio, DrawContainer().center);
       winHelper.drawSimpleCase();
-      winHelper.drawFrameMullion(win.frame);
+      winHelper.drawFrameMullion(win.frame!);
     }
   }
 
@@ -37,16 +34,16 @@ class WinPainter extends CustomPainter {
     return true;
   }
 
-  WinDrawHelper drawWindow(
-      TouchyCanvas pcanvas, PWindow pWindow, double ratio, Offset center) {
+  DrawHelper drawWindow(
+      Canvas canvas, WindowObject activeWindow, double ratio, Offset center) {
     try {
-      WinDrawHelper winHelper =
-          new WinDrawHelper(this.iCanvasSize, pcanvas, 1, ratio, center);
-      winHelper.iWindow = pWindow;
+      DrawHelper winHelper =
+          new DrawHelper(this.canvasSize, canvas, 1, ratio, center);
+      winHelper.windowObject = activeWindow;
       return winHelper;
     } catch (e) {
       print('Error: ' + e.toString());
-      return null;
+      return new DrawHelper(this.canvasSize, canvas, 1, ratio, center);
     }
   }
 }

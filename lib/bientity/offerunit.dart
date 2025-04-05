@@ -7,15 +7,15 @@ class OfferUnit {
   double amount;
   double total;
   OfferUnit({
-    this.pricerow,
-    this.amount,
-    this.total,
+    required this.pricerow,
+    required this.amount,
+    required this.total,
   });
 
   OfferUnit copyWith({
-    PriceRow pricerow,
-    double amount,
-    double total,
+    PriceRow? pricerow,
+    double? amount,
+    double? total,
   }) {
     return OfferUnit(
       pricerow: pricerow ?? this.pricerow,
@@ -26,19 +26,17 @@ class OfferUnit {
 
   Map<String, dynamic> toMap() {
     return {
-      'pricerow': pricerow?.toMap(),
+      'pricerow': pricerow.toMap(),
       'amount': amount,
       'total': total,
     };
   }
 
   factory OfferUnit.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return OfferUnit(
       pricerow: PriceRow.fromMap(map['pricerow']),
-      amount: map['amount'],
-      total: map['total'],
+      amount: map['amount'] as double,
+      total: map['total'] as double,
     );
   }
 

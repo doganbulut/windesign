@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'package:windesign/bientity/offerunit.dart';
 
 class Offer {
-  int id;
-  String customerCode;
-  String pricelistName;
-  int orderId;
-  DateTime date;
-  List<OfferUnit> units;
-  double discountPercent;
-  double discountAmount;
-  double total;
+  int? id;
+  String? customerCode;
+  String? pricelistName;
+  int? orderId;
+  DateTime? date;
+  List<OfferUnit>? units;
+  double? discountPercent;
+  double? discountAmount;
+  double? total;
+
   Offer({
     this.id,
     this.customerCode,
@@ -24,15 +25,15 @@ class Offer {
   });
 
   Offer copyWith({
-    int id,
-    String customerCode,
-    String pricelistName,
-    int orderId,
-    DateTime date,
-    List<OfferUnit> units,
-    double discountPercent,
-    double discountAmount,
-    double total,
+    int? id,
+    String? customerCode,
+    String? pricelistName,
+    int? orderId,
+    DateTime? date,
+    List<OfferUnit>? units,
+    double? discountPercent,
+    double? discountAmount,
+    double? total,
   }) {
     return Offer(
       id: id ?? this.id,
@@ -54,7 +55,7 @@ class Offer {
       'pricelistName': pricelistName,
       'orderId': orderId,
       'date': date?.millisecondsSinceEpoch,
-      'units': units?.map((x) => x?.toMap())?.toList(),
+      'units': units?.map((x) => x.toMap()).toList(),
       'discountPercent': discountPercent,
       'discountAmount': discountAmount,
       'total': total,
@@ -62,16 +63,18 @@ class Offer {
   }
 
   factory Offer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Offer(
       id: map['id'],
       customerCode: map['customerCode'],
       pricelistName: map['pricelistName'],
       orderId: map['orderId'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      units:
-          List<OfferUnit>.from(map['units']?.map((x) => OfferUnit.fromMap(x))),
+      date: map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : null,
+      units: map['units'] != null
+          ? List<OfferUnit>.from(
+              map['units']?.map((x) => OfferUnit.fromMap(x)) ?? [])
+          : null,
       discountPercent: map['discountPercent'],
       discountAmount: map['discountAmount'],
       total: map['total'],

@@ -1,50 +1,37 @@
 import 'dart:convert';
 
 class CellUnit {
-  String name;
-  String type;
-  String typeName;
-  double unitprice;
-  double unitHeight;
-  double unitWidth;
-  CellUnit({
-    this.name,
-    this.type,
-    this.typeName,
-    this.unitprice,
-    this.unitHeight,
-    this.unitWidth,
-  });
+  final String id;
+  final String type;
+  final String typeName;
+  final double unitprice;
+  final double unitHeight;
+  final double unitWidth;
 
-  CellUnit.create(String type, String typeName, String name, double cellHeight,
-      double cellWidth, double price) {
-    this.type = type;
-    this.typeName = typeName;
-    this.name = name;
-    this.unitHeight = cellHeight - 10;
-    this.unitWidth = cellWidth - 10;
-    this.unitprice = (unitHeight * unitWidth) * price;
-  }
+  CellUnit({
+    required this.id,
+    required this.type,
+    required this.typeName,
+    required this.unitprice,
+    required this.unitHeight,
+    required this.unitWidth,
+  });
 
   @override
   String toString() {
-    return "Panel/Cam: " +
-        this.type +
-        " typeName: " +
-        this.typeName +
-        " name: " +
-        this.name +
-        " unitHeight: " +
-        this.unitHeight.toString() +
-        " unitWidth: " +
-        this.unitWidth.toString() +
-        " unitprice: " +
-        this.unitprice.toString();
+    return 'CellUnit { '
+        'type: $type, '
+        'typeName: $typeName, '
+        'name: $id, '
+        'unitHeight: $unitHeight, '
+        'unitWidth: $unitWidth, '
+        'unitprice: $unitprice '
+        '}';
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
+    return <String, dynamic>{
+      'name': id,
       'type': type,
       'typeName': typeName,
       'unitprice': unitprice,
@@ -54,15 +41,13 @@ class CellUnit {
   }
 
   factory CellUnit.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return CellUnit(
-      name: map['name'],
-      type: map['type'],
-      typeName: map['typeName'],
-      unitprice: map['unitprice'],
-      unitHeight: map['unitHeight'],
-      unitWidth: map['unitWidth'],
+      id: map['name'] as String,
+      type: map['type'] as String,
+      typeName: map['typeName'] as String,
+      unitprice: map['unitprice'] as double,
+      unitHeight: map['unitHeight'] as double,
+      unitWidth: map['unitWidth'] as double,
     );
   }
 

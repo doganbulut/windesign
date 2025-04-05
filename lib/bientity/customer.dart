@@ -1,30 +1,23 @@
 import 'dart:convert';
 
 class Customer {
-  String code;
-  String name;
-  String phone;
-  String fax;
-  String email;
-  String contactName1;
-  String contactName1Phone;
-  String contactName2;
-  String contactName2Phone;
-  String address1;
-  String address2;
-  String address3;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  String info6;
-  String info7;
-  String info8;
-  String info9;
+  final String code;
+  final String name;
+  final String? phone;
+  final String? fax;
+  final String? email;
+  final String? contactName1;
+  final String? contactName1Phone;
+  final String? contactName2;
+  final String? contactName2Phone;
+  final String? address1;
+  final String? address2;
+  final String? address3;
+  final Map<String, String>? info;
+
   Customer({
-    this.code,
-    this.name,
+    required this.code,
+    required this.name,
     this.phone,
     this.fax,
     this.email,
@@ -35,16 +28,40 @@ class Customer {
     this.address1,
     this.address2,
     this.address3,
-    this.info1,
-    this.info2,
-    this.info3,
-    this.info4,
-    this.info5,
-    this.info6,
-    this.info7,
-    this.info8,
-    this.info9,
+    this.info,
   });
+
+  Customer copyWith({
+    String? code,
+    String? name,
+    String? phone,
+    String? fax,
+    String? email,
+    String? contactName1,
+    String? contactName1Phone,
+    String? contactName2,
+    String? contactName2Phone,
+    String? address1,
+    String? address2,
+    String? address3,
+    Map<String, String>? info,
+  }) {
+    return Customer(
+      code: code ?? this.code,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      fax: fax ?? this.fax,
+      email: email ?? this.email,
+      contactName1: contactName1 ?? this.contactName1,
+      contactName1Phone: contactName1Phone ?? this.contactName1Phone,
+      contactName2: contactName2 ?? this.contactName2,
+      contactName2Phone: contactName2Phone ?? this.contactName2Phone,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      address3: address3 ?? this.address3,
+      info: info ?? this.info,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -60,24 +77,14 @@ class Customer {
       'address1': address1,
       'address2': address2,
       'address3': address3,
-      'info1': info1,
-      'info2': info2,
-      'info3': info3,
-      'info4': info4,
-      'info5': info5,
-      'info6': info6,
-      'info7': info7,
-      'info8': info8,
-      'info9': info9,
+      'info': info,
     };
   }
 
   factory Customer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Customer(
-      code: map['code'],
-      name: map['name'],
+      code: map['code'] ?? '',
+      name: map['name'] ?? '',
       phone: map['phone'],
       fax: map['fax'],
       email: map['email'],
@@ -88,15 +95,7 @@ class Customer {
       address1: map['address1'],
       address2: map['address2'],
       address3: map['address3'],
-      info1: map['info1'],
-      info2: map['info2'],
-      info3: map['info3'],
-      info4: map['info4'],
-      info5: map['info5'],
-      info6: map['info6'],
-      info7: map['info7'],
-      info8: map['info8'],
-      info9: map['info9'],
+      info: map['info'] != null ? Map<String, String>.from(map['info']) : null,
     );
   }
 
@@ -107,6 +106,6 @@ class Customer {
 
   @override
   String toString() {
-    return 'Customer(code: $code, name: $name, phone: $phone, fax: $fax, email: $email, contactName1: $contactName1, contactName1Phone: $contactName1Phone, contactName2: $contactName2, contactName2Phone: $contactName2Phone, address1: $address1, address2: $address2, address3: $address3, info1: $info1, info2: $info2, info3: $info3, info4: $info4, info5: $info5, info6: $info6, info7: $info7, info8: $info8, info9: $info9)';
+    return 'Customer(code: $code, name: $name, phone: $phone, fax: $fax, email: $email, contactName1: $contactName1, contactName1Phone: $contactName1Phone, contactName2: $contactName2, contactName2Phone: $contactName2Phone, address1: $address1, address2: $address2, address3: $address3, info: $info)';
   }
 }

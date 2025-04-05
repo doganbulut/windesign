@@ -12,11 +12,13 @@ class ApiHelper {
   Future<bool> postTable(String table, jsondata) async {
     try {
       final url = 'https://$host:$port/api/rpc?table=$table&jsondata=$jsondata';
-
+      final uri = Uri.parse(url);
       final response = await http.post(
-        url,
+        uri,
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Connection": "keep-alive",
           "Access-Control-Allow-Origin": "*"
         },
       );
@@ -36,9 +38,9 @@ class ApiHelper {
   Future<String> getAll(String table) async {
     try {
       final url = 'https://${host}:${port}/api/rpc/GetAll/${table}';
-
+      final uri = Uri.parse(url);
       final response = await http.get(
-        url,
+        uri,
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*"

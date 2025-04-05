@@ -4,81 +4,77 @@ import 'package:windesign/accessoryentity/accessory.dart';
 import 'package:windesign/profentity/profile.dart';
 
 class Part {
-  String profileCode;
-  double leftAngle;
-  double rightAngle;
-  double len;
+  final String profileCode;
+  final double leftAngle;
+  final double rightAngle;
+  double? len;
   double inlen;
   double cutlen;
   double leftEar;
   double rightEar;
-  Profile profile;
-  List<Accessory> accessories;
+  final Profile profile;
+  final List<Accessory> accessories;
+
   Part({
-    this.profileCode,
-    this.leftAngle,
-    this.rightAngle,
-    this.len,
-    this.inlen,
-    this.cutlen,
-    this.leftEar,
-    this.rightEar,
-    this.profile,
-    this.accessories,
-  });
+    required this.profileCode,
+    required this.leftAngle,
+    required this.rightAngle,
+    required this.len,
+    required this.inlen,
+    required this.cutlen,
+    required this.leftEar,
+    required this.rightEar,
+    required this.profile,
+    List<Accessory>? accessories,
+  }) : this.accessories = accessories ?? [];
 
   Part.create(
-      double leftAngle, double rightAngle, double len, Profile profile) {
-    this.profileCode = profile.code;
-    this.leftAngle = leftAngle;
-    this.rightAngle = rightAngle;
-    this.len = len;
-    this.profile = profile;
+      {required double leftAngle,
+      required double rightAngle,
+      required double? len,
+      required Profile profile})
+      : profileCode = profile.code,
+        leftAngle = leftAngle,
+        rightAngle = rightAngle,
+        len = len,
+        profile = profile,
+        leftEar = 0,
+        rightEar = 0,
+        this.cutlen = 0,
+        this.inlen = 0,
+        accessories = [] {
     calculateInLen();
   }
 
-  calculateInLen() {
-    this.leftEar = 0;
-    this.rightEar = 0;
-
-    if (leftAngle != 90)
-      leftEar = getear(leftAngle);
-    else
-      leftEar = 0;
-
-    if (rightAngle != 90)
-      rightEar = getear(rightAngle);
-    else
-      rightEar = 0;
-
-    inlen = len - (leftEar + rightEar);
+  void calculateInLen() {
+    leftEar = (leftAngle != 90) ? getear(leftAngle) : 0;
+    rightEar = (rightAngle != 90) ? getear(rightAngle) : 0;
+    inlen = (len! - (leftEar + rightEar));
   }
 
-  calculateCutLen(double weldMargin) {
-    cutlen = len + weldMargin;
+  void calculateCutLen(double weldMargin) {
+    cutlen = (len! + weldMargin);
   }
 
   double getear(double degree) {
-    return round(
-        math.tan((math.pi * degree) / 180).abs() * this.profile.width, 2);
+    return round(math.tan((math.pi * degree) / 180).abs() * profile.width, 2);
   }
 
   double round(double value, int places) {
-    double mod = math.pow(10.0, places);
-    return ((value * mod).round().toDouble() / mod);
+    return double.parse(value.toStringAsFixed(places));
   }
 
   Part copyWith({
-    String profileCode,
-    double leftAngle,
-    double rightAngle,
-    double len,
-    double inlen,
-    double cutlen,
-    double leftEar,
-    double rightEar,
-    Profile profile,
-    List<Accessory> accessories,
+    String? profileCode,
+    double? leftAngle,
+    double? rightAngle,
+    double? len,
+    double? inlen,
+    double? cutlen,
+    double? leftEar,
+    double? rightEar,
+    Profile? profile,
+    List<Accessory>? accessories,
   }) {
     return Part(
       profileCode: profileCode ?? this.profileCode,
@@ -104,26 +100,26 @@ class Part {
       'cutlen': cutlen,
       'leftEar': leftEar,
       'rightEar': rightEar,
-      'profile': profile?.toMap(),
-      'accessories': accessories?.map((x) => x?.toMap())?.toList(),
+      'profile': profile.toMap(),
+      'accessories': accessories.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Part.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Part(
-      profileCode: map['profileCode'],
-      leftAngle: map['leftAngle'],
-      rightAngle: map['rightAngle'],
-      len: map['len'],
-      inlen: map['inlen'],
-      cutlen: map['cutlen'],
-      leftEar: map['leftEar'],
-      rightEar: map['rightEar'],
+      profileCode: map['profileCode'] as String,
+      leftAngle: map['leftAngle'] as double,
+      rightAngle: map['rightAngle'] as double,
+      len: map['len'] as double,
+      inlen: map['inlen'] as double,
+      cutlen: map['cutlen'] as double,
+      leftEar: map['leftEar'] as double,
+      rightEar: map['rightEar'] as double,
       profile: Profile.fromMap(map['profile']),
-      accessories: List<Accessory>.from(
-          map['accessories']?.map((x) => Accessory.fromMap(x))),
+      accessories: map['accessories'] != null
+          ? List<Accessory>.from(
+              (map['accessories'] as List).map((x) => Accessory.fromMap(x)))
+          : [],
     );
   }
 

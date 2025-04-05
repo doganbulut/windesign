@@ -1,19 +1,20 @@
 import 'dart:convert';
 
 class Profile {
-  String code;
-  String name;
-  String type; //frame,sash,mullion,door
-  double height;
-  double topwidth;
-  double width;
+  final String code;
+  final String name;
+  final String type; //frame,sash,mullion,door
+  final double height;
+  final double topwidth;
+  final double width;
+
   Profile({
-    this.code,
-    this.name,
-    this.type,
-    this.height,
-    this.topwidth,
-    this.width,
+    required this.code,
+    required this.name,
+    required this.type,
+    required this.height,
+    required this.topwidth,
+    required this.width,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,15 +29,13 @@ class Profile {
   }
 
   factory Profile.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Profile(
-      code: map['code'],
-      name: map['name'],
-      type: map['type'],
-      height: map['height'].toDouble(),
-      topwidth: map['topwidth'].toDouble(),
-      width: map['width'].toDouble(),
+      code: map['code'] as String,
+      name: map['name'] as String,
+      type: map['type'] as String,
+      height: map['height'] as double,
+      topwidth: map['topwidth'] as double,
+      width: map['width'] as double,
     );
   }
 

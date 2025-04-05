@@ -2,26 +2,38 @@ import 'dart:convert';
 import 'serie.dart';
 
 class Manufacturer {
-  String name;
-  List<Serie> series;
+  final String name;
+  final List<Serie> series;
+
   Manufacturer({
-    this.name,
-    this.series,
-  });
+    required this.name,
+    List<Serie>? series,
+  }) : this.series = series ?? [];
+
+  Manufacturer copyWith({
+    String? name,
+    List<Serie>? series,
+  }) {
+    return Manufacturer(
+      name: name ?? this.name,
+      series: series ?? this.series,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'series': series?.map((x) => x?.toMap())?.toList(),
+      'series': series.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Manufacturer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Manufacturer(
-      name: map['name'],
-      series: List<Serie>.from(map['series']?.map((x) => Serie.fromMap(x))),
+      name: map['name'] as String,
+      series: map['series'] != null
+          ? List<Serie>.from(
+              (map['series'] as List).map((x) => Serie.fromMap(x)))
+          : [],
     );
   }
 

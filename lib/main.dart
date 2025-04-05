@@ -1,30 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:windesign/ui/screens/maincanvas.dart';
+import 'package:windesign/winentity/windows_test.dart';
 import 'ui/localization/languagehelper.dart';
 import 'ui/screens/mainlayout.dart';
-import 'ui/screens/manufacturer/manufacturerlist.dart';
-import 'windrawer/windraw.dart';
+import 'windrawer/drawcontainer.dart';
 
 /// main is entry point of Flutter application
 void main() {
   LngHelper().initLanguage('tr');
-  WinDraw().testwindata();
-  return runApp(MyApp());
+  DrawContainer().testwindata();
+  DrawContainer().testwin = WindowsTest()..testMakeWin();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(accentColor: Colors.red),
+      theme: ThemeData.light().copyWith(
+          colorScheme:
+              ColorScheme.fromSwatch().copyWith(secondary: Colors.red)),
       debugShowCheckedModeBanner: false,
-      home: ManufacturerListScreen(),
+      home: MainCanvas(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({
-    Key key,
+    required Key key,
   }) : super(key: key);
 
   @override

@@ -1,20 +1,20 @@
 import 'dart:convert';
 
 class Accessory {
-  String code;
-  String name;
-  String type;
+  final String code;
+  final String name;
+  final String type;
+
   Accessory({
-    this.code,
-    this.name,
-    this.type,
+    required this.code,
+    required this.name,
+    required this.type,
   });
-  String parent; //sash,frame,win
 
   Accessory copyWith({
-    String code,
-    String name,
-    String type,
+    String? code,
+    String? name,
+    String? type,
   }) {
     return Accessory(
       code: code ?? this.code,
@@ -32,12 +32,10 @@ class Accessory {
   }
 
   factory Accessory.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Accessory(
-      code: map['code'],
-      name: map['name'],
-      type: map['type'],
+      code: map['code'] as String,
+      name: map['name'] as String,
+      type: map['type'] as String,
     );
   }
 
