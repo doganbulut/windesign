@@ -8,7 +8,9 @@ class LayoutMain extends StatelessWidget {
     return Scaffold(
       //title: Text(LngHelper().words.appName),
       drawer: getLeftMenu(),
-      body: WinDrawView(),
+      body: WinDrawView(
+        key: UniqueKey(),
+      ),
     );
   }
 

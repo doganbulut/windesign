@@ -3,46 +3,43 @@ import 'package:windesign/profentity/profile.dart';
 import 'package:windesign/profentity/serie.dart';
 
 class ProfileTest {
-  Manufacturer manufacturer;
+  final Manufacturer manufacturer;
 
-  void createData() {
-    manufacturer = new Manufacturer();
-    manufacturer.name = "Pimapen";
-    manufacturer.series = [];
+  ProfileTest() : manufacturer = _createData();
 
-    Serie serie = new Serie();
-    serie.name = "Carizma";
-    serie.isSliding = false;
+  static Manufacturer _createData() {
+    final manufacturer = Manufacturer(name: "Pimapen");
 
-    serie.profiles = [];
+    final serie = Serie(name: "Carizma", isSliding: false, sashMargin: 0);
 
-    Profile frame = new Profile();
-    frame.code = "STKFR00001";
-    frame.type = "frame";
-    frame.name = "Kasa";
-    frame.height = 70;
-    frame.topwidth = 62;
-    frame.width = 41;
+    final frame = Profile(
+      code: "STKFR00001",
+      type: ProfileType.frame,
+      name: "Kasa",
+      height: 70,
+      topwidth: 62,
+      width: 41,
+    );
 
-    Profile sash = new Profile();
-    sash.code = "STKSH00002";
-    sash.type = "sash";
-    sash.name = "Kanat";
-    sash.height = 70;
-    sash.topwidth = 58;
-    sash.width = 59;
+    final sash = Profile(
+      code: "STKSH00002",
+      type: ProfileType.sash,
+      name: "Kanat",
+      height: 70,
+      topwidth: 58,
+      width: 59,
+    );
 
-    Profile mullion = new Profile();
-    mullion.code = "STKOK00003";
-    mullion.type = "mullion";
-    mullion.name = "Orta Kayıt";
-    mullion.height = 70;
-    mullion.topwidth = 82;
-    mullion.width = 41;
+    final mullion = Profile(
+      code: "STKOK00003",
+      type: ProfileType.mullion,
+      name: "Orta Kayıt",
+      height: 70,
+      topwidth: 82,
+      width: 41,
+    );
 
-    serie.profiles.add(frame);
-    serie.profiles.add(sash);
-    serie.profiles.add(mullion);
+    serie.profiles.addAll([frame, sash, mullion]);
 
     String jsonserie = serie.toJson();
     print(jsonserie);
@@ -50,5 +47,7 @@ class ProfileTest {
     manufacturer.series.add(serie);
     String jsonman = manufacturer.toJson();
     print(jsonman);
+
+    return manufacturer;
   }
 }

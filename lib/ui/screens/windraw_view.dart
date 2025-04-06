@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:touchable/touchable.dart';
 import 'package:windesign/windrawer/windraw.dart';
 import 'package:windesign/windrawer/winpainter.dart';
 import 'package:windesign/winentity/wincell.dart';
 import 'package:windesign/winentity/window.dart';
 
 class WinDrawView extends StatefulWidget {
-  const WinDrawView({Key key}) : super(key: key);
+  const WinDrawView({required Key key}) : super(key: key);
 
   @override
   _WinDrawViewState createState() => _WinDrawViewState();
@@ -15,8 +14,8 @@ class WinDrawView extends StatefulWidget {
 class _WinDrawViewState extends State<WinDrawView> {
   final double toolbarHeight = 50;
   final double menuHeight = 56;
-  WinPainter winPainter;
-  BuildContext context;
+  WinPainter? winPainter;
+  late BuildContext context;
   String data = '';
 
   @override
@@ -40,21 +39,23 @@ class _WinDrawViewState extends State<WinDrawView> {
       height: toolHeight,
       child: Container(
         color: Colors.amber,
-        child: ButtonBar(
+        child: OverflowBar(
           alignment: MainAxisAlignment.start,
           children: <Widget>[
             TextButton(
               child: Text('Create Window'),
               onPressed: () {
                 /** */
-
-                var frameProfile = WinDraw().testwin.frameProfile;
-                WinDraw().windows.clear();
-                var window = new PWindow.create(2, 1, frameProfile, 3000, 1500);
-                WinDraw().windows.add(window);
-                WinDraw().activeWindow = window;
-                var pWindow = WinDraw().activeWindow;
-                pWindow.calculateWinParts();
+                WindowLayoutManager().initializeTestWindows();
+                var frameProfile =
+                    WindowLayoutManager().windowTestData!.frameProfile;
+                WindowLayoutManager().windowList.clear();
+                var window =
+                    new PWindow.create(2, 1, frameProfile!, 3000, 1500);
+                WindowLayoutManager().windowList.add(window);
+                WindowLayoutManager().activeWindow = window;
+                var pWindow = WindowLayoutManager().activeWindow;
+                pWindow!.calculateWinParts();
                 pWindow.frame.computeCells();
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 print(pWindow.toString());
@@ -64,9 +65,9 @@ class _WinDrawViewState extends State<WinDrawView> {
               child: Text('Change Size'),
               onPressed: () {
                 /** */
-                var pWindow = WinDraw().activeWindow;
-                pWindow.width = 3000;
-                pWindow.height = 1500;
+                var pWindow = WindowLayoutManager().activeWindow;
+                pWindow!.width = 3000;
+                pWindow.height = 2000;
                 pWindow.calculateWinParts();
                 pWindow.frame.computeVerticalMullion();
                 pWindow.frame.computeCells();
@@ -75,15 +76,14 @@ class _WinDrawViewState extends State<WinDrawView> {
             ),
             TextButton(
               child: Text('Json'),
-
               onPressed: () {
                 /** */
-                var pWindow = WinDraw().activeWindow;
-                String pdata = pWindow.toJson();
+                var pWindow = WindowLayoutManager().activeWindow;
+                String pdata = pWindow!.toJson();
                 var zwindow = PWindow.fromJson(pdata);
-                WinDraw().windows.clear();
-                WinDraw().windows.add(zwindow);
-                WinDraw().activeWindow = zwindow;
+                WindowLayoutManager().windowList.clear();
+                WindowLayoutManager().windowList.add(zwindow);
+                WindowLayoutManager().activeWindow = zwindow;
 
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 print(zwindow.toString());
@@ -93,9 +93,9 @@ class _WinDrawViewState extends State<WinDrawView> {
               child: Text('Json2'),
               onPressed: () {
                 /** */
-                data = WinDraw().toJson();
+                data = WindowLayoutManager().toJson();
                 print(data);
-                WinDraw().windows.clear();
+                WindowLayoutManager().windowList.clear();
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 //print(zwindow.toString());
               },
@@ -104,8 +104,9 @@ class _WinDrawViewState extends State<WinDrawView> {
               child: Text('Json3'),
               onPressed: () {
                 /** */
-                WinDraw().fromJson(data);
-                WinDraw().activeWindow = WinDraw().windows[0];
+                WindowLayoutManager().fromJson(data);
+                WindowLayoutManager().activeWindow =
+                    WindowLayoutManager().windowList[0];
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 //print(zwindow.toString());
               },
@@ -114,8 +115,9 @@ class _WinDrawViewState extends State<WinDrawView> {
               child: Text('Json4'),
               onPressed: () {
                 /** */
-                WinDraw().fromJson(data);
-                WinDraw().activeWindow = WinDraw().windows[0];
+                WindowLayoutManager().fromJson(data);
+                WindowLayoutManager().activeWindow =
+                    WindowLayoutManager().windowList[0];
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 //print(zwindow.toString());
               },
@@ -124,17 +126,18 @@ class _WinDrawViewState extends State<WinDrawView> {
               child: Text('Add Mullion'),
               onPressed: () {
                 /** */
-                var pWindow = WinDraw().activeWindow;
-                pWindow.calculateWinParts();
+                var pWindow = WindowLayoutManager().activeWindow;
+                pWindow!.calculateWinParts();
                 pWindow.frame.addVerticalCenterMullion(
-                    WinDraw().testwin.mullionProfile, 2);
+                    WindowLayoutManager().windowTestData!.mullionProfile!, 2);
                 pWindow.frame.computeVerticalMullion();
                 pWindow.frame.computeCells();
                 //createDefautUnit(pWindow.frame.cells);
                 //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
                 for (var icell in pWindow.frame.cells) {
                   icell.addHorizontalMullion(
-                      WinDraw().testwin.mullionProfile, [500]);
+                      WindowLayoutManager().windowTestData!.mullionProfile!,
+                      [500]);
                   icell.computeHorizontalMullion();
                   icell.computeCells();
                 }
@@ -145,8 +148,13 @@ class _WinDrawViewState extends State<WinDrawView> {
                     if (j == 0)
                       jcell.createCellUnit("cam01", "çift cam", 90);
                     else
-                      jcell.createSashCell(WinDraw().testwin.sashProfile,
-                          "rightdouble", 8, "cam01", "çift cam", 90);
+                      jcell.createSashCell(
+                          WindowLayoutManager().windowTestData!.sashProfile!,
+                          "rightdouble",
+                          8,
+                          "cam01",
+                          "çift cam",
+                          90);
                     ++j;
                   }
                 }
@@ -158,7 +166,7 @@ class _WinDrawViewState extends State<WinDrawView> {
                   if (c1.unit != null) print(c1.unit);
                   if (c1.sash != null) {
                     print(c1.sash);
-                    print(c1.sash.unit);
+                    print(c1.sash!.unit);
                   }
                 }
               },
@@ -182,7 +190,7 @@ class _WinDrawViewState extends State<WinDrawView> {
         }
         if (icell.sash != null) {
           print(icell.sash);
-          print(icell.sash.unit);
+          print(icell.sash!.unit);
         }
       }
     }
@@ -203,10 +211,14 @@ class _WinDrawViewState extends State<WinDrawView> {
       constraints: BoxConstraints(
           maxWidth: sizeCanvas.width, maxHeight: sizeCanvas.height),
       color: Colors.grey,
-      child: CanvasTouchDetector(
-          builder: (context) => CustomPaint(
-              size: sizeCanvas,
-              painter: this.winPainter = WinPainter(context))),
+      child: GestureDetector(
+        onTapDown: (TapDownDetails details) {
+          print("Tapped at: ${details.localPosition}");
+          // Handle tap events here
+        },
+        child: CustomPaint(
+            size: sizeCanvas, painter: this.winPainter = WinPainter(context)),
+      ),
     );
   }
 }

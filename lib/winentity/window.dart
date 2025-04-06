@@ -9,21 +9,22 @@ class PWindow {
   int count;
   double width;
   double height;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  String info6;
-  String info7;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  String? info6;
+  String? info7;
   Wincell frame;
-  String addtype;
-  Offset start;
+  String? addtype;
+  Offset? start;
+
   PWindow({
-    this.order,
-    this.count,
-    this.width,
-    this.height,
+    required this.order,
+    required this.count,
+    required this.width,
+    required this.height,
     this.info1,
     this.info2,
     this.info3,
@@ -31,51 +32,52 @@ class PWindow {
     this.info5,
     this.info6,
     this.info7,
-    this.frame,
+    required this.frame,
     this.addtype,
     this.start,
   });
 
-  PWindow.create(
+  factory PWindow.create(
       int order, int count, Profile frameProfile, double width, double height) {
-    this.order = order;
-    this.count = count;
-    this.width = width;
-    this.height = height;
-    this.addtype = "";
-    this.start = Offset.zero;
-
-    frame = new Wincell.create('1');
+    Wincell frame = Wincell.create('1');
     //left
-    frame.left = new Part.create(45, 135, this.height, frameProfile);
+    frame.left = Part.create(
+        leftAngle: 45, rightAngle: 135, len: height, profile: frameProfile);
     //right
-    frame.right = new Part.create(45, 135, this.height, frameProfile);
+    frame.right = Part.create(
+        leftAngle: 45, rightAngle: 135, len: height, profile: frameProfile);
     //top
-    frame.top = new Part.create(45, 135, this.width, frameProfile);
+    frame.top = Part.create(
+        leftAngle: 45, rightAngle: 135, len: width, profile: frameProfile);
     //bottom
-    frame.bottom = new Part.create(45, 135, this.width, frameProfile);
+    frame.bottom = Part.create(
+        leftAngle: 45, rightAngle: 135, len: width, profile: frameProfile);
 
-    frame.inHeight = frame.left.inlen;
-    frame.inWidth = frame.top.inlen;
-    frame.xPoint = frame.top.leftEar;
-    frame.yPoint = frame.left.leftEar;
+    frame.inHeight = frame.left!.inlen;
+    frame.inWidth = frame.top!.inlen;
+    frame.xPoint = frame.top!.leftEar;
+    frame.yPoint = frame.left!.leftEar;
+
+    return PWindow(
+      order: order,
+      count: count,
+      width: width,
+      height: height,
+      frame: frame,
+    );
   }
 
   bool calculateWinParts() {
     try {
-      frame.left.len = this.height;
-      frame.left.calculateInLen();
-      frame.right.len = this.height;
-      frame.right.calculateInLen();
-      frame.top.len = this.width;
-      frame.top.calculateInLen();
-      frame.bottom.len = this.width;
-      frame.bottom.calculateInLen();
+      frame.left!.len = this.height;
+      frame.right!.len = this.height;
+      frame.top!.len = this.width;
+      frame.bottom!.len = this.width;
 
-      frame.inHeight = frame.left.inlen;
-      frame.inWidth = frame.top.inlen;
-      frame.xPoint = frame.top.leftEar;
-      frame.yPoint = frame.left.leftEar;
+      frame.inHeight = frame.left!.inlen;
+      frame.inWidth = frame.top!.inlen;
+      frame.xPoint = frame.top!.leftEar;
+      frame.yPoint = frame.left!.leftEar;
 
       return true;
     } catch (e) {
@@ -96,21 +98,32 @@ class PWindow {
       'info5': info5,
       'info6': info6,
       'info7': info7,
-      'frame': frame?.toMap(),
+      'frame': frame.toMap(),
       'addtype': addtype,
-      'start': start?.dx.toString() + ':' + start?.dy.toString(),
+      'start': start != null ? '${start!.dx}:${start!.dy}' : null,
     };
   }
 
-  factory PWindow.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-    var offsets = map['start'].toString().split(':');
+  factory PWindow.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
+
+    if (map['frame'] == null) {
+      throw ArgumentError("Frame cannot be null");
+    }
+
+    Offset? start;
+    if (map['start'] != null) {
+      var offsets = map['start'].toString().split(':');
+      start = Offset(double.parse(offsets[0]), double.parse(offsets[1]));
+    }
 
     return PWindow(
-      order: map['order'],
-      count: map['count'],
-      width: map['width'],
-      height: map['height'],
+      order: map['order'] ?? 0,
+      count: map['count'] ?? 0,
+      width: map['width'] ?? 0.0,
+      height: map['height'] ?? 0.0,
       info1: map['info1'],
       info2: map['info2'],
       info3: map['info3'],
@@ -120,7 +133,7 @@ class PWindow {
       info7: map['info7'],
       frame: Wincell.fromMap(map['frame']),
       addtype: map['addtype'],
-      start: new Offset(double.parse(offsets[0]), double.parse(offsets[1])),
+      start: start,
     );
   }
 

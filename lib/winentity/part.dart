@@ -14,81 +14,75 @@ class Part {
   double rightEar;
   Profile profile;
   List<Accessory> accessories;
+
   Part({
-    this.profileCode,
-    this.leftAngle,
-    this.rightAngle,
-    this.len,
-    this.inlen,
-    this.cutlen,
-    this.leftEar,
-    this.rightEar,
-    this.profile,
-    this.accessories,
-  });
+    required this.profileCode,
+    required this.leftAngle,
+    required this.rightAngle,
+    required this.len,
+    required this.profile,
+    List<Accessory>? accessories,
+  })  : accessories = accessories ?? [],
+        leftEar = _getEar(leftAngle, profile.width),
+        rightEar = _getEar(rightAngle, profile.width),
+        inlen = len -
+            (_getEar(leftAngle, profile.width) +
+                _getEar(rightAngle, profile.width)),
+        cutlen = len;
 
   Part.create(
-      double leftAngle, double rightAngle, double len, Profile profile) {
-    this.profileCode = profile.code;
-    this.leftAngle = leftAngle;
-    this.rightAngle = rightAngle;
-    this.len = len;
-    this.profile = profile;
-    calculateInLen();
+      {required double leftAngle,
+      required double rightAngle,
+      required double len,
+      required Profile profile})
+      : this(
+          profileCode: profile.code,
+          leftAngle: leftAngle,
+          rightAngle: rightAngle,
+          len: len,
+          profile: profile,
+        );
+
+  void calculateCutLen(double weldMargin) {
+    // ignore: no_leading_underscores_for_local_identifiers
+    double _cutlen = len + weldMargin;
+    Part(
+      profileCode: profileCode,
+      leftAngle: leftAngle,
+      rightAngle: rightAngle,
+      len: len,
+      profile: profile,
+      accessories: accessories,
+    ).copyWith(cutlen: _cutlen);
   }
 
-  calculateInLen() {
-    this.leftEar = 0;
-    this.rightEar = 0;
-
-    if (leftAngle != 90)
-      leftEar = getear(leftAngle);
-    else
-      leftEar = 0;
-
-    if (rightAngle != 90)
-      rightEar = getear(rightAngle);
-    else
-      rightEar = 0;
-
-    inlen = len - (leftEar + rightEar);
+  static double _getEar(double degree, double profileWidth) {
+    if (degree == 90) return 0;
+    return _round(math.tan((math.pi * degree) / 180).abs() * profileWidth, 2);
   }
 
-  calculateCutLen(double weldMargin) {
-    cutlen = len + weldMargin;
-  }
-
-  double getear(double degree) {
-    return round(
-        math.tan((math.pi * degree) / 180).abs() * this.profile.width, 2);
-  }
-
-  double round(double value, int places) {
-    double mod = math.pow(10.0, places);
+  static double _round(double value, int places) {
+    double mod = math.pow(10.0, places).toDouble(); // Explicitly cast to double
     return ((value * mod).round().toDouble() / mod);
   }
 
   Part copyWith({
-    String profileCode,
-    double leftAngle,
-    double rightAngle,
-    double len,
-    double inlen,
-    double cutlen,
-    double leftEar,
-    double rightEar,
-    Profile profile,
-    List<Accessory> accessories,
+    String? profileCode,
+    double? leftAngle,
+    double? rightAngle,
+    double? len,
+    double? inlen,
+    double? cutlen,
+    double? leftEar,
+    double? rightEar,
+    Profile? profile,
+    List<Accessory>? accessories,
   }) {
     return Part(
       profileCode: profileCode ?? this.profileCode,
       leftAngle: leftAngle ?? this.leftAngle,
       rightAngle: rightAngle ?? this.rightAngle,
       len: len ?? this.len,
-      inlen: inlen ?? this.inlen,
-      cutlen: cutlen ?? this.cutlen,
-      leftEar: leftEar ?? this.leftEar,
-      rightEar: rightEar ?? this.rightEar,
       profile: profile ?? this.profile,
       accessories: accessories ?? this.accessories,
     );
@@ -104,26 +98,29 @@ class Part {
       'cutlen': cutlen,
       'leftEar': leftEar,
       'rightEar': rightEar,
-      'profile': profile?.toMap(),
-      'accessories': accessories?.map((x) => x?.toMap())?.toList(),
+      'profile': profile.toMap(),
+      'accessories': accessories.map((x) => x.toMap()).toList(),
     };
   }
 
-  factory Part.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory Part.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
+
+    List<dynamic>? accessoryMaps = map['accessories'];
+    List<Accessory> accessories = [];
+    if (accessoryMaps != null && accessoryMaps.isNotEmpty) {
+      accessories = accessoryMaps.map((x) => Accessory.fromMap(x)).toList();
+    }
 
     return Part(
-      profileCode: map['profileCode'],
-      leftAngle: map['leftAngle'],
-      rightAngle: map['rightAngle'],
-      len: map['len'],
-      inlen: map['inlen'],
-      cutlen: map['cutlen'],
-      leftEar: map['leftEar'],
-      rightEar: map['rightEar'],
+      profileCode: map['profileCode'] ?? '',
+      leftAngle: map['leftAngle'] ?? 0.0,
+      rightAngle: map['rightAngle'] ?? 0.0,
+      len: map['len'] ?? 0.0,
       profile: Profile.fromMap(map['profile']),
-      accessories: List<Accessory>.from(
-          map['accessories']?.map((x) => Accessory.fromMap(x))),
+      accessories: accessories,
     );
   }
 

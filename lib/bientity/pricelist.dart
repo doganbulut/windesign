@@ -2,26 +2,27 @@ import 'dart:convert';
 import 'package:windesign/bientity/pricerow.dart';
 
 class PriceList {
-  String name;
-  String desciription;
-  DateTime createDate;
-  List<PriceRow> rows;
+  final String name;
+  final String description;
+  final DateTime createDate;
+  final List<PriceRow> rows;
+
   PriceList({
-    this.name,
-    this.desciription,
-    this.createDate,
-    this.rows,
-  });
+    required this.name,
+    required this.description,
+    required this.createDate,
+    List<PriceRow>? rows,
+  }) : rows = rows ?? [];
 
   PriceList copyWith({
-    String name,
-    String desciription,
-    DateTime createDate,
-    List<PriceRow> rows,
+    String? name,
+    String? description,
+    DateTime? createDate,
+    List<PriceRow>? rows,
   }) {
     return PriceList(
       name: name ?? this.name,
-      desciription: desciription ?? this.desciription,
+      description: description ?? this.description,
       createDate: createDate ?? this.createDate,
       rows: rows ?? this.rows,
     );
@@ -30,20 +31,28 @@ class PriceList {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'desciription': desciription,
-      'createDate': createDate?.millisecondsSinceEpoch,
-      'rows': rows?.map((x) => x?.toMap())?.toList(),
+      'description': description,
+      'createDate': createDate.millisecondsSinceEpoch,
+      'rows': rows.map((x) => x.toMap()).toList(),
     };
   }
 
-  factory PriceList.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory PriceList.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
+
+    List<dynamic>? rowMaps = map['rows'];
+    List<PriceRow> rows = [];
+    if (rowMaps != null && rowMaps.isNotEmpty) {
+      rows = rowMaps.map((x) => PriceRow.fromMap(x)).toList();
+    }
 
     return PriceList(
-      name: map['name'],
-      desciription: map['desciription'],
-      createDate: DateTime.fromMillisecondsSinceEpoch(map['createDate']),
-      rows: List<PriceRow>.from(map['rows']?.map((x) => PriceRow.fromMap(x))),
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      createDate: DateTime.fromMillisecondsSinceEpoch(map['createDate'] ?? 0),
+      rows: rows,
     );
   }
 
@@ -54,6 +63,6 @@ class PriceList {
 
   @override
   String toString() {
-    return 'PriceList(name: $name, desciription: $desciription, createDate: $createDate, rows: $rows)';
+    return 'PriceList(name: $name, description: $description, createDate: $createDate, rows: $rows)';
   }
 }

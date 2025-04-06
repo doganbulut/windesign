@@ -1,726 +1,557 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:touchable/touchable.dart';
 import 'package:windesign/winentity/direction.dart';
 import 'package:windesign/winentity/wincell.dart';
 import 'package:windesign/winentity/window.dart';
 
-class WinDrawHelper {
-  PWindow iWindow;
-  TouchyCanvas iCanvas;
-  double scale;
+enum OpenDirection {
+  left,
+  right,
+  up,
+  down,
+  doubleLeft,
+  doubleRight,
+  doubleUp,
+  doubleDown,
+}
+
+class WindowDrawingHelper {
+  // Constants
+  static const double _defaultLatchWidth = 20;
+  static const double _defaultRulerMargin = 200;
+  static const double _defaultRulerTextMargin = 400;
+  static const double _defaultRulerHeightMargin = 150;
+  static const double _defaultRulerWidthTextMargin = 50;
+  static const double _defaultRulerPointSize = 15;
+  static const double _defaultFontSize = 50;
+  static const double _defaultParagraphSize = 400;
+  static const double _defaultMullionParagraphSize = 150;
+
+  // Properties
+  PWindow? window;
+  Canvas canvas;
   Size screenSize;
-  double ratio;
-  Offset center;
-  double frameWidth;
-  double mullionWidth;
-  double sashWidth;
-  double latchWidth;
-  double rulerMargin;
-  double rulerTextMargin;
-  double rulerHeightMargin;
-  double rulerWidthTextMargin;
-  double rulerPointSize;
-  double fontSize;
-  double paragraphWidth;
-  Offset startPoint1;
-  Offset startPoint2;
+  double scaleRatio;
+  Offset drawingCenter;
+  double? frameWidth;
+  double? mullionWidth;
+  double? sashWidth;
+  double? latchWidth;
+  double? rulerMargin;
+  double? rulerTextMargin;
+  double? rulerHeightMargin;
+  double? rulerWidthTextMargin;
+  double? rulerPointSize;
+  double? fontSize;
+  double? paragraphWidth;
+  Offset? startPoint1;
+  Offset? startPoint2;
 
-  WinDrawHelper(Size screenSize, TouchyCanvas iCanvas, double scale,
-      double ratio, Offset center) {
-    this.iCanvas = iCanvas;
-    this.screenSize = screenSize;
-    this.ratio = ratio;
-    this.center = center;
-    this.latchWidth = 20 * this.ratio;
-    this.rulerMargin = 200 * this.ratio;
-    this.rulerTextMargin = 400 * this.ratio;
-    this.rulerHeightMargin = 150 * this.ratio;
-    this.rulerWidthTextMargin = 50 * this.ratio;
-    this.rulerPointSize = 15 * this.ratio;
-    this.fontSize = 50 * this.ratio;
+  // Constructor
+  WindowDrawingHelper(
+      this.screenSize, this.canvas, this.scaleRatio, this.drawingCenter) {
+    _initializeParameters();
   }
 
-  void repaintWin(Size screenSize, TouchyCanvas iCanvas, double scale) {
-    this.iCanvas = iCanvas;
-    this.screenSize = screenSize;
+  void _initializeParameters() {
+    latchWidth = _defaultLatchWidth * scaleRatio;
+    rulerMargin = _defaultRulerMargin * scaleRatio;
+    rulerTextMargin = _defaultRulerTextMargin * scaleRatio;
+    rulerHeightMargin = _defaultRulerHeightMargin * scaleRatio;
+    rulerWidthTextMargin = _defaultRulerWidthTextMargin * scaleRatio;
+    rulerPointSize = _defaultRulerPointSize * scaleRatio;
+    fontSize = _defaultFontSize * scaleRatio;
   }
 
-  drawSimpleCase() {
-    Offset cp = this.center; //Center Point;
-    this.frameWidth = this.iWindow.frame.top.profile.width * this.ratio;
-    double x = this.iWindow.width * this.ratio;
-    double y = this.iWindow.height * this.ratio;
-    Offset ustart = (this.iWindow.start * this.ratio) + cp;
+  // Methods
+  void updateDrawingParameters(
+      Size screenSize, Canvas canvas, double scaleRatio) {
+    this.canvas = canvas;
+    this.screenSize = screenSize;
+    this.scaleRatio = scaleRatio;
+    _initializeParameters();
+  }
 
-    Offset q1 = new Offset(ustart.dx, ustart.dy);
-    Offset q2 = new Offset(q1.dx, q1.dy + y);
-    Offset q3 = new Offset(q2.dx + x, q2.dy);
-    Offset q4 = new Offset(q1.dx + x, q1.dy);
+  void drawBasicWindow() {
+    if (window == null || window!.frame.top == null) return;
+    Offset centerPoint = drawingCenter;
+    frameWidth = window!.frame.top!.profile.width * scaleRatio;
+    double windowWidth = window!.width * scaleRatio;
+    double windowHeight = window!.height * scaleRatio;
+    Offset windowStart = (window!.start! * scaleRatio) + centerPoint;
 
-    startPoint1 = q1;
-    startPoint2 = q2;
+    Offset topLeft = Offset(windowStart.dx, windowStart.dy);
+    Offset bottomLeft = Offset(topLeft.dx, topLeft.dy + windowHeight);
+    Offset bottomRight = Offset(bottomLeft.dx + windowWidth, bottomLeft.dy);
+    Offset topRight = Offset(topLeft.dx + windowWidth, topLeft.dy);
 
-    //tan(45) = 1 corner = w
-    double corner = this.frameWidth;
+    startPoint1 = topLeft;
+    startPoint2 = bottomLeft;
 
-    Offset w1 = new Offset(q1.dx + corner, q1.dy + corner);
-    Offset w2 = new Offset(w1.dx, q2.dy - corner);
-    Offset w3 = new Offset(q3.dx - corner, w2.dy);
-    Offset w4 = new Offset(w3.dx, w1.dy);
+    double corner = frameWidth!;
+
+    Offset innerTopLeft = Offset(topLeft.dx + corner, topLeft.dy + corner);
+    Offset innerBottomLeft = Offset(innerTopLeft.dx, bottomLeft.dy - corner);
+    Offset innerBottomRight =
+        Offset(bottomRight.dx - corner, innerBottomLeft.dy);
+    Offset innerTopRight = Offset(innerBottomRight.dx, innerTopLeft.dy);
 
     //Ruler
-    drawFrameHeightRuler(this.iCanvas, q1, q2, this.iWindow.height);
-    drawFrameWidthRuler(this.iCanvas, q2, q3, this.iWindow.width);
+    drawHeightRuler(canvas, topLeft, bottomLeft, window!.height);
+    drawWidthRuler(canvas, bottomLeft, bottomRight, window!.width);
 
-    //SOL
-    Paint paintSolContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSolColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSol = new Path();
-    pathSol.addPolygon([q1, q2, w2, w1], true);
-
-    this.iCanvas.drawPath(pathSol, paintSolColor);
-    this.iCanvas.drawPath(pathSol, paintSolContour);
-
-    //ALT
-
-    Paint paintAltContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintAltColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathAlt = new Path();
-    pathAlt.addPolygon([q2, q3, w3, w2], true);
-
-    this.iCanvas.drawPath(pathAlt, paintAltColor);
-    this.iCanvas.drawPath(pathAlt, paintAltContour);
-
-    //SAG
-
-    Paint paintSagContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSagColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSag = new Path();
-    pathSag.addPolygon([q3, q4, w4, w3], true);
-
-    this.iCanvas.drawPath(pathSag, paintSagColor);
-    this.iCanvas.drawPath(pathSag, paintSagContour);
-
-    //UST
-    Paint paintUstContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintUstColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathUst = new Path();
-    pathUst.addPolygon([q4, q1, w1, w4], true);
-
-    this.iCanvas.drawPath(pathUst, paintUstColor);
-    this.iCanvas.drawPath(pathUst, paintUstContour);
+    // Draw the window frame
+    _drawFramePart(canvas, topLeft, bottomLeft, innerBottomLeft, innerTopLeft,
+        Colors.white, "left");
+    _drawFramePart(canvas, bottomLeft, bottomRight, innerBottomRight,
+        innerBottomLeft, Colors.white, "bottom");
+    _drawFramePart(canvas, bottomRight, topRight, innerTopRight,
+        innerBottomRight, Colors.white, "right");
+    _drawFramePart(canvas, topRight, topLeft, innerTopLeft, innerTopRight,
+        Colors.white, "top");
   }
 
-  drawSash(Wincell cell) {
-    Offset cp = this.center; //Center Point;
-    this.sashWidth = cell.sash.top.profile.width * this.ratio;
+  void drawSashWithFrame(Wincell cell) {
+    Offset centerPoint = drawingCenter;
+    sashWidth = cell.sash!.top.profile.width * scaleRatio;
 
-    double x1 = (cell.xPoint - cell.sash.sashMargin) * this.ratio;
-    double y1 = (cell.yPoint - cell.sash.sashMargin) * this.ratio;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1) + cp;
+    double x1 = (cell.xPoint! - cell.sash!.sashMargin) * scaleRatio;
+    double y1 = (cell.yPoint! - cell.sash!.sashMargin) * scaleRatio;
+    Offset unitStart =
+        (window!.start! * scaleRatio) + Offset(x1, y1) + centerPoint;
 
-    double uwidth = cell.sash.sashWidth * this.ratio;
-    double uheight = cell.sash.sashHeight * this.ratio;
+    double unitWidth = cell.sash!.sashWidth * scaleRatio;
+    double unitHeight = cell.sash!.sashHeight * scaleRatio;
 
-    double corner = this.sashWidth;
+    double corner = sashWidth!;
 
-    Offset q1 = new Offset(ustart.dx, ustart.dy);
-    Offset q2 = new Offset(q1.dx, q1.dy + uheight);
-    Offset q3 = new Offset(q2.dx + uwidth, q2.dy);
-    Offset q4 = new Offset(q1.dx + uwidth, q1.dy);
+    Offset topLeft = Offset(unitStart.dx, unitStart.dy);
+    Offset bottomLeft = Offset(topLeft.dx, topLeft.dy + unitHeight);
+    Offset bottomRight = Offset(bottomLeft.dx + unitWidth, bottomLeft.dy);
+    Offset topRight = Offset(topLeft.dx + unitWidth, topLeft.dy);
 
-    Offset w1 = new Offset(q1.dx + corner, q1.dy + corner);
-    Offset w2 = new Offset(w1.dx, q2.dy - corner);
-    Offset w3 = new Offset(q3.dx - corner, w2.dy);
-    Offset w4 = new Offset(w3.dx, w1.dy);
+    Offset innerTopLeft = Offset(topLeft.dx + corner, topLeft.dy + corner);
+    Offset innerBottomLeft = Offset(innerTopLeft.dx, bottomLeft.dy - corner);
+    Offset innerBottomRight =
+        Offset(bottomRight.dx - corner, innerBottomLeft.dy);
+    Offset innerTopRight = Offset(innerBottomRight.dx, innerTopLeft.dy);
 
-    drawSashUnit(w1, cell);
+    drawSashGlassUnit(innerTopLeft, cell);
 
-    //SOL
-    Paint paintSolContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
+    // Draw the sash frame
+    _drawFramePart(canvas, topLeft, bottomLeft, innerBottomLeft, innerTopLeft,
+        Colors.white, "left");
+    _drawFramePart(canvas, bottomLeft, bottomRight, innerBottomRight,
+        innerBottomLeft, Colors.white, "bottom");
+    _drawFramePart(canvas, bottomRight, topRight, innerTopRight,
+        innerBottomRight, Colors.white, "right");
+    _drawFramePart(canvas, topRight, topLeft, innerTopLeft, innerTopRight,
+        Colors.white, "top");
 
-    Paint paintSolColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSol = new Path();
-    pathSol.addPolygon([q1, q2, w2, w1], true);
-
-    this.iCanvas.drawPath(pathSol, paintSolColor);
-    this.iCanvas.drawPath(pathSol, paintSolContour);
-
-    //ALT
-    Paint paintAltContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintAltColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathAlt = new Path();
-    pathAlt.addPolygon([q2, q3, w3, w2], true);
-
-    this.iCanvas.drawPath(pathAlt, paintAltColor);
-    this.iCanvas.drawPath(pathAlt, paintAltContour);
-
-    //SAG
-    Paint paintSagContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSagColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSag = new Path();
-    pathSag.addPolygon([q3, q4, w4, w3], true);
-
-    this.iCanvas.drawPath(pathSag, paintSagColor);
-    this.iCanvas.drawPath(pathSag, paintSagContour);
-
-    //UST
-    Paint paintUstContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintUstColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathUst = new Path();
-    pathUst.addPolygon([q4, q1, w1, w4], true);
-
-    this.iCanvas.drawPath(pathUst, paintUstColor);
-    this.iCanvas.drawPath(pathUst, paintUstContour);
-
-    //Kol Çiz
-    Paint paintKol = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    double kolCenterY = 0;
-    double kolCenterX = 0;
-    Offset kolOffset;
-
-    if (cell.sash.openDirection.startsWith("left")) {
-      kolCenterY = q1.dy + ((q2.dy - q1.dy) / 2);
-      kolCenterX = q1.dx + ((w1.dx - q1.dx) / 2);
-    } else if (cell.sash.openDirection.startsWith("right")) {
-      kolCenterY = q4.dy + ((q3.dy - q4.dy) / 2);
-      kolCenterX = w4.dx + ((q4.dx - w4.dx) / 2);
-    } else if (cell.sash.openDirection.startsWith("up")) {
-      kolCenterY = q1.dy + ((w1.dy - q1.dy) / 2);
-      kolCenterX = q1.dx + ((q4.dx - q1.dx) / 2);
-    } else if (cell.sash.openDirection.startsWith("down")) {
-      kolCenterY = q2.dy + ((w3.dy - q2.dy) / 2);
-      kolCenterX = q2.dx + ((q3.dx - q2.dx) / 2);
-    }
-
-    kolOffset = Offset(kolCenterX, kolCenterY);
-    this.iCanvas.drawCircle(kolOffset, 15 * this.ratio, paintKol);
-    drawSashLacth(w1, cell);
+    // Draw the latch
+    //_drawSashLatch(innerTopLeft, cell);
   }
 
-  drawSashUnit(Offset startPoint, Wincell cell) {
-    Paint paint = new Paint()
+  void drawSashGlassUnit(Offset startPoint, Wincell cell) {
+    Paint paint = Paint()
       ..color = Colors.blue
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
     double x1 = startPoint.dx;
     double y1 = startPoint.dy;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1);
+    Offset unitStart = (window!.start! * scaleRatio) + Offset(x1, y1);
 
-    double uwidth = cell.sash.unit.unitWidth * this.ratio;
-    double uheight = cell.sash.unit.unitHeight * this.ratio;
-    Size usize = Size(uwidth, uheight);
+    double unitWidth = cell.sash!.unit.unitWidth * scaleRatio;
+    double unitHeight = cell.sash!.unit.unitHeight * scaleRatio;
+    Size unitSize = Size(unitWidth, unitHeight);
 
-    this.iCanvas.drawRect(ustart & usize, paint);
+    canvas.drawRect(unitStart & unitSize, paint);
 
     //Glass Line
+    //_drawGlassLine(unitStart, unitSize, cell.sash.openDirection);
+  }
+
+/*
+  void _drawGlassLine(Offset unitStart, Size unitSize, OpenDirection openDirection) {
     Offset p1;
     Offset p2;
     Offset p3;
 
-    if (cell.sash.openDirection.startsWith("left")) {
-      p1 = new Offset(ustart.dx + usize.width, ustart.dy);
-      p2 = new Offset(ustart.dx, ustart.dy + (usize.height / 2));
-      p3 = new Offset(ustart.dx + usize.width, ustart.dy + usize.height);
-    } else if (cell.sash.openDirection.startsWith("right")) {
-      p1 = new Offset(ustart.dx, ustart.dy);
-      p2 = new Offset(ustart.dx + usize.width, ustart.dy + (usize.height / 2));
-      p3 = new Offset(ustart.dx, ustart.dy + usize.height);
-    } else if (cell.sash.openDirection.startsWith("up")) {
-      p1 = new Offset(ustart.dx, ustart.dy + usize.height);
-      p2 = new Offset(ustart.dx + (usize.width / 2), ustart.dy);
-      p3 = new Offset(ustart.dx + usize.width, ustart.dy + usize.height);
-    } else if (cell.sash.openDirection.startsWith("down")) {
-      p1 = new Offset(ustart.dx, ustart.dy);
-      p2 = new Offset(ustart.dx + (usize.width / 2), ustart.dy + usize.height);
-      p3 = new Offset(ustart.dx + usize.width, ustart.dy);
+    if (openDirection.startsWith("left")) {
+      p1 = Offset(unitStart.dx + unitSize.width, unitStart.dy);
+      p2 = Offset(unitStart.dx, unitStart.dy + (unitSize.height / 2));
+      p3 =
+          Offset(unitStart.dx + unitSize.width, unitStart.dy + unitSize.height);
+    } else if (openDirection.startsWith("right")) {
+      p1 = Offset(unitStart.dx, unitStart.dy);
+      p2 = Offset(
+          unitStart.dx + unitSize.width, unitStart.dy + (unitSize.height / 2));
+      p3 = Offset(unitStart.dx, unitStart.dy + unitSize.height);
+    } else if (openDirection.startsWith("up")) {
+      p1 = Offset(unitStart.dx, unitStart.dy + unitSize.height);
+      p2 = Offset(unitStart.dx + (unitSize.width / 2), unitStart.dy);
+      p3 =
+          Offset(unitStart.dx + unitSize.width, unitStart.dy + unitSize.height);
+    } else if (openDirection.startsWith("down")) {
+      p1 = Offset(unitStart.dx, unitStart.dy);
+      p2 = Offset(
+          unitStart.dx + (unitSize.width / 2), unitStart.dy + unitSize.height);
+      p3 = Offset(unitStart.dx + unitSize.width, unitStart.dy);
+    } else {
+      return;
     }
 
-    Paint paintGlassLine = new Paint()
+    Paint paintGlassLine = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
-    Path pathGlass = new Path();
+    Path pathGlass = Path();
     pathGlass.addPolygon([p1, p2, p3], false);
-    this.iCanvas.drawPath(pathGlass, paintGlassLine);
+    canvas.drawPath(pathGlass, paintGlassLine);
 
-    if (cell.sash.openDirection.contains("double")) {
-      p1 = new Offset(ustart.dx, ustart.dy + usize.height);
-      p2 = new Offset(ustart.dx + (usize.width / 2), ustart.dy);
-      p3 = new Offset(ustart.dx + usize.width, ustart.dy + usize.height);
-      Path pathGlass2 = new Path();
+    if (openDirection.contains("double")) {
+      p1 = Offset(unitStart.dx, unitStart.dy + unitSize.height);
+      p2 = Offset(unitStart.dx + (unitSize.width / 2), unitStart.dy);
+      p3 =
+          Offset(unitStart.dx + unitSize.width, unitStart.dy + unitSize.height);
+      Path pathGlass2 = Path();
       pathGlass2.addPolygon([p1, p2, p3], false);
-      this.iCanvas.drawPath(pathGlass2, paintGlassLine);
+      canvas.drawPath(pathGlass2, paintGlassLine);
     }
   }
 
-  drawSashLacth(Offset startPoint, Wincell cell) {
+  void _drawSashLatch(Offset startPoint, Wincell cell) {
+    if (cell.sash.unit == null) return;
     double x1 = startPoint.dx;
     double y1 = startPoint.dy;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1);
+    Offset unitStart = (window!.start! * scaleRatio) + Offset(x1, y1);
 
-    double uwidth =
-        (cell.sash.unit.unitWidth + (2 * cell.sash.sashMargin)) * this.ratio;
-    double uheight =
-        (cell.sash.unit.unitHeight + (2 * cell.sash.sashMargin)) * this.ratio;
+    double unitWidth =
+        (cell.sash.unit.unitWidth + (2 * cell.sash.sashMargin)) * scaleRatio;
+    double unitHeight =
+        (cell.sash.unit.unitHeight + (2 * cell.sash.sashMargin)) * scaleRatio;
 
-    double corner = this.latchWidth;
+    double corner = latchWidth!;
 
-    Offset q1 = new Offset(ustart.dx, ustart.dy);
-    Offset q2 = new Offset(q1.dx, q1.dy + uheight);
-    Offset q3 = new Offset(q2.dx + uwidth, q2.dy);
-    Offset q4 = new Offset(q1.dx + uwidth, q1.dy);
+    Offset topLeft = Offset(unitStart.dx, unitStart.dy);
+    Offset bottomLeft = Offset(topLeft.dx, topLeft.dy + unitHeight);
+    Offset bottomRight = Offset(bottomLeft.dx + unitWidth, bottomLeft.dy);
+    Offset topRight = Offset(topLeft.dx + unitWidth, topLeft.dy);
 
-    Offset w1 = new Offset(q1.dx + corner, q1.dy + corner);
-    Offset w2 = new Offset(w1.dx, q2.dy - corner);
-    Offset w3 = new Offset(q3.dx - corner, w2.dy);
-    Offset w4 = new Offset(w3.dx, w1.dy);
+    Offset innerTopLeft = Offset(topLeft.dx + corner, topLeft.dy + corner);
+    Offset innerBottomLeft = Offset(innerTopLeft.dx, bottomLeft.dy - corner);
+    Offset innerBottomRight =
+        Offset(bottomRight.dx - corner, innerBottomLeft.dy);
+    Offset innerTopRight = Offset(innerBottomRight.dx, innerTopLeft.dy);
 
-    //SOL
-    Paint paintSolContour = new Paint()
+    // Draw the latch frame
+    _drawFramePart(canvas, topLeft, bottomLeft, innerBottomLeft, innerTopLeft,
+        Colors.white, "left");
+    _drawFramePart(canvas, bottomLeft, bottomRight, innerBottomRight,
+        innerBottomLeft, Colors.white, "bottom");
+    _drawFramePart(canvas, bottomRight, topRight, innerTopRight,
+        innerBottomRight, Colors.white, "right");
+    _drawFramePart(canvas, topRight, topLeft, innerTopLeft, innerTopRight,
+        Colors.white, "top");
+
+    // Draw the latch
+    Paint paintLatch = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
-    Paint paintSolColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
+    double latchCenterY = 0;
+    double latchCenterX = 0;
+    Offset latchOffset;
 
-    Path pathSol = new Path();
-    pathSol.addPolygon([q1, q2, w2, w1], true);
+    if (cell.sash.openDirection.startsWith("left")) {
+      latchCenterY = topLeft.dy + ((bottomLeft.dy - topLeft.dy) / 2);
+      latchCenterX = topLeft.dx + ((innerTopLeft.dx - topLeft.dx) / 2);
+    } else if (cell.sash.openDirection.startsWith("right")) {
+      latchCenterY = topRight.dy + ((bottomRight.dy - topRight.dy) / 2);
+      latchCenterX = innerTopRight.dx + ((topRight.dx - innerTopRight.dx) / 2);
+    } else if (cell.sash.openDirection.startsWith("up")) {
+      latchCenterY = topLeft.dy + ((innerTopLeft.dy - topLeft.dy) / 2);
+      latchCenterX = topLeft.dx + ((topRight.dx - topLeft.dx) / 2);
+    } else if (cell.sash.openDirection.startsWith("down")) {
+      latchCenterY =
+          bottomLeft.dy + ((innerBottomRight.dy - bottomLeft.dy) / 2);
+      latchCenterX = bottomLeft.dx + ((bottomRight.dx - bottomLeft.dx) / 2);
+    }
 
-    this.iCanvas.drawPath(pathSol, paintSolColor);
-    this.iCanvas.drawPath(pathSol, paintSolContour);
-
-    //ALT
-    Paint paintAltContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintAltColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathAlt = new Path();
-    pathAlt.addPolygon([q2, q3, w3, w2], true);
-
-    this.iCanvas.drawPath(pathAlt, paintAltColor);
-    this.iCanvas.drawPath(pathAlt, paintAltContour);
-
-    //SAG
-    Paint paintSagContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSagColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSag = new Path();
-    pathSag.addPolygon([q3, q4, w4, w3], true);
-
-    this.iCanvas.drawPath(pathSag, paintSagColor);
-    this.iCanvas.drawPath(pathSag, paintSagContour);
-
-    //UST
-    Paint paintUstContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintUstColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathUst = new Path();
-    pathUst.addPolygon([q4, q1, w1, w4], true);
-
-    this.iCanvas.drawPath(pathUst, paintUstColor);
-    this.iCanvas.drawPath(pathUst, paintUstContour);
+    latchOffset = Offset(latchCenterX, latchCenterY);
+    canvas.drawCircle(latchOffset, 15 * scaleRatio, paintLatch);
   }
+  */
 
-  drawFrameMullion(Wincell cell) {
-    Offset cp = this.center; //Center Point;
-    double x1 = cell.xPoint * this.ratio;
-    double y1 = cell.yPoint * this.ratio;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1) + cp;
+  void drawMullion(Wincell cell) {
+    Offset centerPoint = drawingCenter;
+    double x1 = cell.xPoint! * scaleRatio;
+    double y1 = cell.yPoint! * scaleRatio;
+    Offset unitStart =
+        (window!.start! * scaleRatio) + Offset(x1, y1) + centerPoint;
 
-    if (cell.mullions.length > 0) {
+    if (cell.mullions.isNotEmpty) {
       for (var mullion in cell.mullions) {
-        this.mullionWidth = mullion.part.profile.width * this.ratio;
-        double mullionPosition = mullion.cellposition * this.ratio;
-        double outPosition = mullion.position * this.ratio;
+        if (mullion.part == null) continue;
+        mullionWidth = mullion.part.profile.width * scaleRatio;
+        double mullionPosition = mullion.cellposition * scaleRatio;
+        double outPosition = mullion.position * scaleRatio;
         double realPositionText = mullion.position;
-        double mullionInlen = mullion.part.inlen * this.ratio;
+        double mullionInlen = mullion.part.inlen * scaleRatio;
 
-        Offset m1;
-        Offset m2;
-        Offset m3;
-        Offset m4;
-        Offset r1;
+        Offset mullionCorner1;
+        Offset mullionCorner2;
+        Offset mullionCorner3;
+        Offset mullionCorner4;
+        Offset rulerStart;
 
         if (mullion.direction == Direction.vertical) {
-          m1 = new Offset(
-              (mullionPosition + ustart.dx) - (this.mullionWidth / 2),
-              ustart.dy);
-          m2 = new Offset(m1.dx + this.mullionWidth, m1.dy);
-          m3 = new Offset(m2.dx, m2.dy + mullionInlen);
-          m4 = new Offset(m3.dx - this.mullionWidth, m3.dy);
+          mullionCorner1 = Offset(
+              (mullionPosition + unitStart.dx) - (mullionWidth! / 2),
+              unitStart.dy);
+          mullionCorner2 =
+              Offset(mullionCorner1.dx + mullionWidth!, mullionCorner1.dy);
+          mullionCorner3 =
+              Offset(mullionCorner2.dx, mullionCorner2.dy + mullionInlen);
+          mullionCorner4 =
+              Offset(mullionCorner3.dx - mullionWidth!, mullionCorner3.dy);
 
-          r1 = new Offset((outPosition + startPoint2.dx), startPoint2.dy);
+          rulerStart = Offset((outPosition + startPoint2!.dx), startPoint2!.dy);
 
-          drawVerticalMullionRuler(this.iCanvas, r1, realPositionText);
+          drawVerticalRuler(canvas, rulerStart, realPositionText);
         } else if (mullion.direction == Direction.horizontal) {
-          m1 = new Offset(ustart.dx,
-              (mullionPosition + ustart.dy) - (this.mullionWidth / 2));
-          m2 = new Offset(m1.dx, m1.dy + this.mullionWidth);
-          m3 = new Offset(m2.dx + mullionInlen, m2.dy);
-          m4 = new Offset(m3.dx, m3.dy - this.mullionWidth);
+          mullionCorner1 = Offset(unitStart.dx,
+              (mullionPosition + unitStart.dy) - (mullionWidth! / 2));
+          mullionCorner2 =
+              Offset(mullionCorner1.dx, mullionCorner1.dy + mullionWidth!);
+          mullionCorner3 =
+              Offset(mullionCorner2.dx + mullionInlen, mullionCorner2.dy);
+          mullionCorner4 =
+              Offset(mullionCorner3.dx, mullionCorner3.dy - mullionWidth!);
 
-          r1 = new Offset(startPoint1.dx, (outPosition + startPoint1.dy));
+          rulerStart = Offset(startPoint1!.dx, (outPosition + startPoint1!.dy));
 
-          drawHorizontalMullionRuler(this.iCanvas, r1, realPositionText);
+          drawHorizontalRuler(canvas, rulerStart, realPositionText);
+        } else {
+          continue;
         }
 
-        Paint paintContour = new Paint()
+        Paint paintContour = Paint()
           ..color = Colors.black
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0;
 
-        Paint paintColor = new Paint()
+        Paint paintColor = Paint()
           ..color = Colors.white
           ..style = PaintingStyle.fill
           ..strokeWidth = 0;
 
-        Path pathUst = new Path();
-        pathUst.addPolygon([m1, m2, m3, m4], true);
+        Path pathUst = Path();
+        pathUst.addPolygon(
+            [mullionCorner1, mullionCorner2, mullionCorner3, mullionCorner4],
+            true);
 
-        this.iCanvas.drawPath(pathUst, paintColor);
-        this.iCanvas.drawPath(pathUst, paintContour);
+        canvas.drawPath(pathUst, paintColor);
+        canvas.drawPath(pathUst, paintContour);
       }
 
       for (var icell in cell.cells) {
-        if (icell.unit != null) drawCellUnit(icell);
-        if (icell.sash != null) drawSash(icell);
-        drawFrameMullion(icell);
+        if (icell.unit != null) drawCell(icell);
+        if (icell.sash != null) drawSashWithFrame(icell);
+        drawMullion(icell);
       }
     } else {
-      if (cell.unit != null) drawCellUnit(cell);
-      if (cell.sash != null) drawSash(cell);
+      if (cell.unit != null) drawCell(cell);
+      if (cell.sash != null) drawSashWithFrame(cell);
     }
   }
 
-  drawCellUnit(Wincell cell) {
-    Offset cp = this.center; //Center Point;
-    Paint paint = new Paint()
+  void drawCell(Wincell cell) {
+    Offset centerPoint = drawingCenter;
+    Paint paint = Paint()
       ..color = Colors.blue
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
-    double x1 = cell.xPoint * this.ratio;
-    double y1 = cell.yPoint * this.ratio;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1) + cp;
+    double x1 = cell.xPoint! * scaleRatio;
+    double y1 = cell.yPoint! * scaleRatio;
+    Offset unitStart =
+        (window!.start! * scaleRatio) + Offset(x1, y1) + centerPoint;
 
-    double uwidth = cell.inWidth * this.ratio;
-    double uheight = cell.inHeight * this.ratio;
-    Size usize = Size(uwidth, uheight);
+    double unitWidth = cell.inWidth! * scaleRatio;
+    double unitHeight = cell.inHeight! * scaleRatio;
+    Size unitSize = Size(unitWidth, unitHeight);
 
-    this.iCanvas.drawRect(ustart & usize, paint);
-    drawUnitLacth(cell);
+    canvas.drawRect(unitStart & unitSize, paint);
+    _drawCellLatch(cell);
   }
 
-  drawUnitLacth(Wincell cell) {
-    Offset cp = this.center; //Center Point;
+  void _drawCellLatch(Wincell cell) {
+    Offset centerPoint = drawingCenter;
 
-    double x1 = cell.xPoint * this.ratio;
-    double y1 = cell.yPoint * this.ratio;
-    Offset ustart = (this.iWindow.start * this.ratio) + Offset(x1, y1) + cp;
+    double x1 = cell.xPoint! * scaleRatio;
+    double y1 = cell.yPoint! * scaleRatio;
+    Offset unitStart =
+        (window!.start! * scaleRatio) + Offset(x1, y1) + centerPoint;
 
-    double uwidth = cell.inWidth * this.ratio;
-    double uheight = cell.inHeight * this.ratio;
+    double unitWidth = cell.inWidth! * scaleRatio;
+    double unitHeight = cell.inHeight! * scaleRatio;
 
-    double corner = this.latchWidth;
+    double corner = latchWidth!;
 
-    Offset q1 = new Offset(ustart.dx, ustart.dy);
-    Offset q2 = new Offset(q1.dx, q1.dy + uheight);
-    Offset q3 = new Offset(q2.dx + uwidth, q2.dy);
-    Offset q4 = new Offset(q1.dx + uwidth, q1.dy);
+    Offset topLeft = Offset(unitStart.dx, unitStart.dy);
+    Offset bottomLeft = Offset(topLeft.dx, topLeft.dy + unitHeight);
+    Offset bottomRight = Offset(bottomLeft.dx + unitWidth, bottomLeft.dy);
+    Offset topRight = Offset(topLeft.dx + unitWidth, topLeft.dy);
 
-    Offset w1 = new Offset(q1.dx + corner, q1.dy + corner);
-    Offset w2 = new Offset(w1.dx, q2.dy - corner);
-    Offset w3 = new Offset(q3.dx - corner, w2.dy);
-    Offset w4 = new Offset(w3.dx, w1.dy);
+    Offset innerTopLeft = Offset(topLeft.dx + corner, topLeft.dy + corner);
+    Offset innerBottomLeft = Offset(innerTopLeft.dx, bottomLeft.dy - corner);
+    Offset innerBottomRight =
+        Offset(bottomRight.dx - corner, innerBottomLeft.dy);
+    Offset innerTopRight = Offset(innerBottomRight.dx, innerTopLeft.dy);
 
-    //SOL
-    Paint paintSolContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSolColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSol = new Path();
-    pathSol.addPolygon([q1, q2, w2, w1], true);
-
-    this.iCanvas.drawPath(pathSol, paintSolColor);
-    this.iCanvas.drawPath(pathSol, paintSolContour);
-
-    //ALT
-    Paint paintAltContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintAltColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathAlt = new Path();
-    pathAlt.addPolygon([q2, q3, w3, w2], true);
-
-    this.iCanvas.drawPath(pathAlt, paintAltColor);
-    this.iCanvas.drawPath(pathAlt, paintAltContour);
-
-    //SAG
-    Paint paintSagContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintSagColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathSag = new Path();
-    pathSag.addPolygon([q3, q4, w4, w3], true);
-
-    this.iCanvas.drawPath(pathSag, paintSagColor);
-    this.iCanvas.drawPath(pathSag, paintSagContour);
-
-    //UST
-    Paint paintUstContour = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0;
-
-    Paint paintUstColor = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 0;
-
-    Path pathUst = new Path();
-    pathUst.addPolygon([q4, q1, w1, w4], true);
-
-    this.iCanvas.drawPath(pathUst, paintUstColor);
-    this.iCanvas.drawPath(pathUst, paintUstContour);
+    // Draw the latch frame
+    _drawFramePart(canvas, topLeft, bottomLeft, innerBottomLeft, innerTopLeft,
+        Colors.white, "left");
+    _drawFramePart(canvas, bottomLeft, bottomRight, innerBottomRight,
+        innerBottomLeft, Colors.white, "bottom");
+    _drawFramePart(canvas, bottomRight, topRight, innerTopRight,
+        innerBottomRight, Colors.white, "right");
+    _drawFramePart(canvas, topRight, topLeft, innerTopLeft, innerTopRight,
+        Colors.white, "top");
   }
 
-  drawFrameHeightRuler(
-      TouchyCanvas canvas, Offset startPoint, endPoint, double len) {
-    Paint paintline = new Paint()
+  void _drawFramePart(Canvas canvas, Offset corner1, Offset corner2,
+      Offset innerCorner1, Offset innerCorner2, Color color, String part) {
+    Paint paintContour = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0;
+
+    Paint paintColor = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 0;
+
+    Path path = Path();
+    path.addPolygon([corner1, corner2, innerCorner2, innerCorner1], true);
+
+    canvas.drawPath(path, paintColor);
+    canvas.drawPath(path, paintContour);
+  }
+
+  void drawHeightRuler(
+      Canvas canvas, Offset startPoint, Offset endPoint, double len) {
+    Paint paintline = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
 
-    Offset sp = new Offset(startPoint.dx - rulerMargin, startPoint.dy);
-    Offset ep = new Offset(endPoint.dx - rulerMargin, endPoint.dy);
+    Offset rulerStartPoint =
+        Offset(startPoint.dx - rulerMargin!, startPoint.dy);
+    Offset rulerEndPoint = Offset(endPoint.dx - rulerMargin!, endPoint.dy);
 
-    canvas.drawLine(sp, ep, paintline);
-    canvas.drawCircle(sp, this.rulerPointSize, paintline);
-    canvas.drawCircle(ep, this.rulerPointSize, paintline);
+    canvas.drawLine(rulerStartPoint, rulerEndPoint, paintline);
+    canvas.drawCircle(rulerStartPoint, rulerPointSize!, paintline);
+    canvas.drawCircle(rulerEndPoint, rulerPointSize!, paintline);
 
-    Paint paintForeground = new Paint()
+    _drawRulerText(canvas, rulerStartPoint, rulerEndPoint, len, true);
+  }
+
+  void drawWidthRuler(
+      Canvas canvas, Offset startPoint, Offset endPoint, double len) {
+    Paint paintline = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1;
+
+    Offset rulerStartPoint =
+        Offset(startPoint.dx, startPoint.dy + rulerMargin!);
+    Offset rulerEndPoint = Offset(endPoint.dx, endPoint.dy + rulerMargin!);
+
+    canvas.drawLine(rulerStartPoint, rulerEndPoint, paintline);
+    canvas.drawCircle(rulerStartPoint, rulerPointSize!, paintline);
+    canvas.drawCircle(rulerEndPoint, rulerPointSize!, paintline);
+
+    _drawRulerText(canvas, rulerStartPoint, rulerEndPoint, len, false);
+  }
+
+  void drawVerticalRuler(Canvas canvas, Offset startPoint, double len) {
+    Paint paintline = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1;
+
+    Offset rulerStartPoint =
+        Offset(startPoint.dx, startPoint.dy + rulerMargin!);
+
+    canvas.drawCircle(rulerStartPoint, rulerPointSize!, paintline);
+
+    _drawMullionRulerText(canvas, rulerStartPoint, len, false);
+  }
+
+  void drawHorizontalRuler(Canvas canvas, Offset startPoint, double len) {
+    Paint paintline = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1;
+
+    Offset rulerStartPoint =
+        Offset(startPoint.dx - rulerMargin!, startPoint.dy);
+
+    canvas.drawCircle(rulerStartPoint, rulerPointSize!, paintline);
+
+    _drawMullionRulerText(canvas, rulerStartPoint, len, true);
+  }
+
+  void _drawRulerText(Canvas canvas, Offset rulerStartPoint,
+      Offset rulerEndPoint, double len, bool isVertical) {
+    Paint paintForeground = Paint()
       ..color = Colors.grey
       ..style = PaintingStyle.fill;
 
-    var builder =
-        ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.right));
+    var builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+        textAlign: isVertical ? TextAlign.right : TextAlign.left));
     builder.pushStyle(ui.TextStyle(
         background: paintForeground,
         color: Colors.black,
-        fontSize: this.fontSize * 1.5));
+        fontSize: fontSize! * 1.5));
     builder.addText(len.toString());
     final paragraph = builder.build();
-    double paragraphsize = 400 * this.ratio;
-    paragraph.layout(new ui.ParagraphConstraints(width: paragraphsize));
+    paragraph.layout(
+        ui.ParagraphConstraints(width: _defaultParagraphSize * scaleRatio));
 
-    Offset textPosition =
-        new Offset(sp.dx - rulerTextMargin, (sp.dy + (ep.dy - sp.dy) / 2));
-    this.iCanvas.drawParagraph(paragraph, textPosition);
+    Offset textPosition = isVertical
+        ? Offset(rulerStartPoint.dx - rulerTextMargin!,
+            (rulerStartPoint.dy + (rulerEndPoint.dy - rulerStartPoint.dy) / 2))
+        : Offset(
+            (rulerStartPoint.dx + (rulerEndPoint.dx - rulerStartPoint.dx) / 2),
+            rulerStartPoint.dy + rulerWidthTextMargin!);
+    canvas.drawParagraph(paragraph, textPosition);
   }
 
-  drawFrameWidthRuler(
-      TouchyCanvas canvas, Offset startPoint, endPoint, double len) {
-    Paint paintline = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 1;
-
-    Offset sp = new Offset(startPoint.dx, startPoint.dy + rulerMargin);
-    Offset ep = new Offset(endPoint.dx, endPoint.dy + rulerMargin);
-
-    canvas.drawLine(sp, ep, paintline);
-    canvas.drawCircle(sp, this.rulerPointSize, paintline);
-    canvas.drawCircle(ep, this.rulerPointSize, paintline);
-
-    Paint paintForeground = new Paint()
-      ..color = Colors.grey
-      ..style = PaintingStyle.fill;
-
-    var builder =
-        ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
-    builder.pushStyle(ui.TextStyle(
-        background: paintForeground,
-        color: Colors.black,
-        fontSize: this.fontSize * 1.5));
-    builder.addText(len.toString());
-    final paragraph = builder.build();
-    double paragraphsize = 400 * this.ratio;
-    paragraph.layout(new ui.ParagraphConstraints(width: paragraphsize));
-
-    Offset textPosition =
-        new Offset((sp.dx + (ep.dx - sp.dx) / 2), sp.dy + rulerWidthTextMargin);
-    this.iCanvas.drawParagraph(paragraph, textPosition);
-  }
-
-  drawVerticalMullionRuler(TouchyCanvas canvas, Offset startPoint, double len) {
-    Paint paintline = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 1;
-
-    Offset sp = new Offset(startPoint.dx, startPoint.dy + rulerMargin);
-
-    canvas.drawCircle(sp, this.rulerPointSize, paintline);
-
-    Paint paintForeground = new Paint()
-      ..color = Colors.grey
-      ..style = PaintingStyle.fill;
-
-    var builder =
-        ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
-    builder.pushStyle(ui.TextStyle(
-        background: paintForeground,
-        color: Colors.black,
-        fontSize: this.fontSize));
-    builder.addText(len.toString());
-    final paragraph = builder.build();
-    double paragraphsize = 150 * this.ratio;
-    paragraph.layout(new ui.ParagraphConstraints(width: paragraphsize));
-
-    Offset textPosition = new Offset(sp.dx, sp.dy + rulerWidthTextMargin);
-    this.iCanvas.drawParagraph(paragraph, textPosition);
-  }
-
-  drawHorizontalMullionRuler(
-      TouchyCanvas canvas, Offset startPoint, double len) {
-    Paint paintline = new Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 1;
-
-    Offset sp = new Offset(startPoint.dx - rulerMargin, startPoint.dy);
-
-    canvas.drawCircle(sp, this.rulerPointSize, paintline);
-
-    Paint paintForeground = new Paint()
+  void _drawMullionRulerText(
+      Canvas canvas, Offset rulerStartPoint, double len, bool isHorizontal) {
+    Paint paintForeground = Paint()
       ..color = Colors.transparent
       ..style = PaintingStyle.fill;
 
     var builder =
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
     builder.pushStyle(ui.TextStyle(
-        background: paintForeground,
-        color: Colors.black,
-        fontSize: this.fontSize));
+        background: paintForeground, color: Colors.black, fontSize: fontSize!));
     builder.addText(len.toString());
     final paragraph = builder.build();
-    double paragraphsize = 150 * this.ratio;
-    paragraph.layout(new ui.ParagraphConstraints(width: paragraphsize));
+    paragraph.layout(ui.ParagraphConstraints(
+        width: _defaultMullionParagraphSize * scaleRatio));
 
-    Offset textPosition = new Offset(sp.dx - rulerHeightMargin, sp.dy);
-    this.iCanvas.drawParagraph(paragraph, textPosition);
+    Offset textPosition = isHorizontal
+        ? Offset(rulerStartPoint.dx - rulerHeightMargin!, rulerStartPoint.dy)
+        : Offset(
+            rulerStartPoint.dx, rulerStartPoint.dy + rulerWidthTextMargin!);
+    canvas.drawParagraph(paragraph, textPosition);
   }
 }

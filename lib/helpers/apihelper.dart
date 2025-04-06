@@ -1,57 +1,55 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiHelper {
-  String host = "";
-  String port = "";
+  final String host;
+  final String port;
 
-  ApiHelper() {
-    host = 'localhost';
-    port = '5001';
-  }
-  //https://localhost:5001/api/rpc?table=manufacturer&jsondata={"name":"Egepen","series":[{"id":1,"name":"Zarizma","isSliding":false,"sashMargin":null,"profiles":[{"code":"STKFR00001","name":"Kasa","type":"frame","height":70,"topwidth":62,"width":41},{"code":"STKSH00002","name":"Kanat","type":"sash","height":70,"topwidth":58,"width":59},{"code":"STKOK00003","name":"Orta Kayıt","type":"mullion","height":70,"topwidth":82,"width":41}]}]}
-  Future<bool> postTable(String table, jsondata) async {
+  ApiHelper({this.host = 'localhost', this.port = '5001'});
+
+  Future<bool> postTable(String table, Map<String, dynamic> jsonData) async {
     try {
-      final url = 'https://$host:$port/api/rpc?table=$table&jsondata=$jsondata';
+      final uri = Uri.https(host, '/api/rpc', {'table': table});
 
       final response = await http.post(
-        url,
+        uri,
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          "Content-Type": "application/json; charset=UTF-8",
         },
+        body: jsonEncode(jsonData),
       );
 
       if (response.statusCode == 200) {
         return response.body.toLowerCase() == "true";
       } else {
-        return false;
+        throw Exception(
+            'Failed to post data to table $table. Status code: ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e) {
-      print(e);
+      print('Error posting data to table $table: $e');
       return false;
     }
   }
 
-  //https://localhost:5001/api/rpc/GetAll/manufacturer
   Future<String> getAll(String table) async {
     try {
-      final url = 'https://${host}:${port}/api/rpc/GetAll/${table}';
+      final uri = Uri.https(host, '/api/rpc/GetAll/$table');
 
       final response = await http.get(
-        url,
+        uri,
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          "Content-Type": "application/json; charset=UTF-8",
         },
       );
 
       if (response.statusCode == 200) {
         return response.body;
       } else {
-        return "";
+        throw Exception(
+            'Failed to get data from table $table. Status code: ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e) {
-      print(e);
+      print('Error getting data from table $table: $e');
       return "";
     }
   }

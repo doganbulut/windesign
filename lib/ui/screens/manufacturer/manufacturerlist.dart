@@ -1,7 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:windesign/helpers/apihelper.dart';
 import 'package:windesign/profentity/manufacturer.dart';
@@ -12,16 +11,15 @@ class ManufacturerListScreen extends StatefulWidget {
 }
 
 class _ManufacturerListScreenState extends State<ManufacturerListScreen> {
-  PlutoGridStateManager stateManager;
-
-  List<PlutoColumn> cols;
-  List<PlutoRow> rows;
-  List<Manufacturer> manufacturers;
+  PlutoGridStateManager? stateManager;
+  List<PlutoColumn>? cols;
+  List<PlutoRow>? rows;
+  List<Manufacturer>? manufacturers;
+  final String manufacturerEndpoint = "manufacturer";
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-
     cols = [
       PlutoColumn(
         title: 'Manufacturer',
@@ -33,21 +31,24 @@ class _ManufacturerListScreenState extends State<ManufacturerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getManufacurerList(),
-      builder: (context, AsyncSnapshot<List<Manufacturer>> snapshot) {
-        if (snapshot.hasData) {
-          manufacturers = snapshot.data;
-          loadRows(manufacturers);
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Manufacturer'),
-            ),
-            body: PlutoGrid(
-              columns: cols,
-              rows: rows,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Manufacturer'),
+      ),
+      body: FutureBuilder<List<Manufacturer>>(
+        future: getManufacurerList(),
+        builder: (context, AsyncSnapshot<List<Manufacturer>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            manufacturers = snapshot.data;
+            rows = loadRows(manufacturers!);
+            return PlutoGrid(
+              columns: cols!,
+              rows: rows!,
               onLoaded: (PlutoGridOnLoadedEvent event) {
-                print(event);
                 event.stateManager.setSelectingMode(PlutoGridSelectingMode.row);
                 stateManager = event.stateManager;
               },
@@ -57,46 +58,51 @@ class _ManufacturerListScreenState extends State<ManufacturerListScreen> {
               onSelected: (PlutoGridOnSelectedEvent event) {
                 print(event);
               },
-            ),
-          );
-        }
-        return Container();
-      },
+            );
+          } else {
+            return Center(child: Text('No data found.'));
+          }
+        },
+      ),
     );
   }
 
   List<PlutoRow> loadRows(List<Manufacturer> manufacturers) {
-    rows = [];
-    for (var manufacturer in manufacturers) {
-      rows.add(
-        PlutoRow(
-          cells: {
-            'name': PlutoCell(value: manufacturer.name),
-          },
-        ),
+    return manufacturers.map((manufacturer) {
+      return PlutoRow(
+        cells: {
+          'name': PlutoCell(value: manufacturer.name),
+        },
       );
-    }
-    return rows;
+    }).toList();
   }
 
   Future<List<Manufacturer>> getManufacurerList() async {
     List<Manufacturer> result = [];
     try {
-      ApiHelper api = new ApiHelper();
-      var jlist = await api.getAll("manufacturer");
-      print(jlist);
-      List maps = jsonDecode(jlist);
+      ApiHelper api = ApiHelper();
+      var jsonResponse = await api.getAll(manufacturerEndpoint);
+      print(jsonResponse);
+      List maps = jsonDecode(jsonResponse);
       for (var item in maps) {
         try {
           var manufac = Manufacturer.fromMap(item);
           result.add(manufac);
           print(manufac);
+        } on FormatException catch (e) {
+          print('JSON parsing error: $e');
+          // Handle JSON parsing error
         } catch (e) {
-          print(e);
+          print('Error processing item: $e');
+          // Handle other errors
         }
       }
+    } on TimeoutException catch (e) {
+      print('Request timed out: $e');
+      // Handle timeout
     } catch (e) {
-      print(e);
+      print('An unexpected error occurred: $e');
+      // Handle other errors
     }
     return result;
   }

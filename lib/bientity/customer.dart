@@ -1,30 +1,29 @@
-import 'dart:convert';
-
 class Customer {
   String code;
   String name;
-  String phone;
-  String fax;
-  String email;
-  String contactName1;
-  String contactName1Phone;
-  String contactName2;
-  String contactName2Phone;
-  String address1;
-  String address2;
-  String address3;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  String info6;
-  String info7;
-  String info8;
-  String info9;
+  String? phone;
+  String? fax;
+  String? email;
+  String? contactName1;
+  String? contactName1Phone;
+  String? contactName2;
+  String? contactName2Phone;
+  String? address1;
+  String? address2;
+  String? address3;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  String? info6;
+  String? info7;
+  String? info8;
+  String? info9;
+
   Customer({
-    this.code,
-    this.name,
+    required this.code,
+    required this.name,
     this.phone,
     this.fax,
     this.email,
@@ -45,6 +44,54 @@ class Customer {
     this.info8,
     this.info9,
   });
+
+  Customer copyWith({
+    String? code,
+    String? name,
+    String? phone,
+    String? fax,
+    String? email,
+    String? contactName1,
+    String? contactName1Phone,
+    String? contactName2,
+    String? contactName2Phone,
+    String? address1,
+    String? address2,
+    String? address3,
+    String? info1,
+    String? info2,
+    String? info3,
+    String? info4,
+    String? info5,
+    String? info6,
+    String? info7,
+    String? info8,
+    String? info9,
+  }) {
+    return Customer(
+      code: code ?? this.code,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      fax: fax ?? this.fax,
+      email: email ?? this.email,
+      contactName1: contactName1 ?? this.contactName1,
+      contactName1Phone: contactName1Phone ?? this.contactName1Phone,
+      contactName2: contactName2 ?? this.contactName2,
+      contactName2Phone: contactName2Phone ?? this.contactName2Phone,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      address3: address3 ?? this.address3,
+      info1: info1 ?? this.info1,
+      info2: info2 ?? this.info2,
+      info3: info3 ?? this.info3,
+      info4: info4 ?? this.info4,
+      info5: info5 ?? this.info5,
+      info6: info6 ?? this.info6,
+      info7: info7 ?? this.info7,
+      info8: info8 ?? this.info8,
+      info9: info9 ?? this.info9,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -72,12 +119,13 @@ class Customer {
     };
   }
 
-  factory Customer.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
+  factory Customer.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
     return Customer(
-      code: map['code'],
-      name: map['name'],
+      code: map['code'] ?? '',
+      name: map['name'] ?? '',
       phone: map['phone'],
       fax: map['fax'],
       email: map['email'],
@@ -100,13 +148,12 @@ class Customer {
     );
   }
 
-  String toJson() => json.encode(toMap());
+  //String toJson() => json.encode(toMap());
 
-  factory Customer.fromJson(String source) =>
-      Customer.fromMap(json.decode(source));
+  //factory Customer.fromJson(String source) =>Customer.fromMap(json.decode(source));
 
-  @override
-  String toString() {
-    return 'Customer(code: $code, name: $name, phone: $phone, fax: $fax, email: $email, contactName1: $contactName1, contactName1Phone: $contactName1Phone, contactName2: $contactName2, contactName2Phone: $contactName2Phone, address1: $address1, address2: $address2, address3: $address3, info1: $info1, info2: $info2, info3: $info3, info4: $info4, info5: $info5, info6: $info6, info7: $info7, info8: $info8, info9: $info9)';
-  }
+  //@override
+  //String toString() {
+  //  return 'Customer(code: $code, name: $name, phone: $phone, fax: $fax, email: $email, contactName1: $contactName1, contactName1Phone: $contactName1Phone, contactName2: $contactName2, contactName2Phone: $contactName2Phone, address1: $address1, address2: $address2, address3: $address3, info1: $info1, info2: $info2, info3: $info3, info4: $info4, info5: $info5, info6: $info6, info7: $info7, info8: $info8, info9: $info9)';
+  //}
 }

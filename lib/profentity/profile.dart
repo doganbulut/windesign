@@ -1,42 +1,65 @@
 import 'dart:convert';
 
+enum ProfileType { frame, sash, mullion, door, unknown }
+
 class Profile {
-  String code;
-  String name;
-  String type; //frame,sash,mullion,door
-  double height;
-  double topwidth;
-  double width;
+  final String code;
+  final String name;
+  final ProfileType type;
+  final double height;
+  final double topwidth;
+  final double width;
+
   Profile({
-    this.code,
-    this.name,
-    this.type,
-    this.height,
-    this.topwidth,
-    this.width,
+    required this.code,
+    required this.name,
+    required this.type,
+    required this.height,
+    required this.topwidth,
+    required this.width,
   });
+
+  Profile copyWith({
+    String? code,
+    String? name,
+    ProfileType? type,
+    double? height,
+    double? topwidth,
+    double? width,
+  }) {
+    return Profile(
+      code: code ?? this.code,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      height: height ?? this.height,
+      topwidth: topwidth ?? this.topwidth,
+      width: width ?? this.width,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
       'code': code,
       'name': name,
-      'type': type,
+      'type': type.toString().split('.').last,
       'height': height,
       'topwidth': topwidth,
       'width': width,
     };
   }
 
-  factory Profile.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory Profile.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
 
     return Profile(
-      code: map['code'],
-      name: map['name'],
-      type: map['type'],
-      height: map['height'].toDouble(),
-      topwidth: map['topwidth'].toDouble(),
-      width: map['width'].toDouble(),
+      code: map['code'] ?? '',
+      name: map['name'] ?? '',
+      type: _parseProfileType(map['type']),
+      height: map['height']?.toDouble() ?? 0.0,
+      topwidth: map['topwidth']?.toDouble() ?? 0.0,
+      width: map['width']?.toDouble() ?? 0.0,
     );
   }
 
@@ -48,5 +71,21 @@ class Profile {
   @override
   String toString() {
     return 'Profile(code: $code, name: $name, type: $type, height: $height, topwidth: $topwidth, width: $width)';
+  }
+
+  static ProfileType _parseProfileType(String? profileString) {
+    if (profileString == null) return ProfileType.unknown;
+    switch (profileString.toLowerCase()) {
+      case 'frame':
+        return ProfileType.frame;
+      case 'sash':
+        return ProfileType.sash;
+      case 'mullion':
+        return ProfileType.mullion;
+      case 'door':
+        return ProfileType.door;
+      default:
+        return ProfileType.unknown;
+    }
   }
 }

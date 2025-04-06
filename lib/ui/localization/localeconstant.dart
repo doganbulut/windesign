@@ -1,22 +1,32 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
+import 'package:windesign/ui/localization/languagehelper.dart';
 
-String languageCode = "tr";
+class LocaleConstant {
+  static Language _language = Language.en;
 
-Future<Locale> setLocale(String languageCode) async {
-  return _locale(languageCode);
-}
+  static Future<Locale> getLocale() async {
+    return _locale(_language);
+  }
 
-Future<Locale> getLocale() async {
-  return _locale(languageCode);
-}
+  static Future<void> setLocale(Language language) async {
+    _language = language;
+  }
 
-Locale _locale(String languageCode) {
-  return languageCode != null && languageCode.isNotEmpty
-      ? Locale(languageCode, '')
-      : Locale('tr', 'TR');
-}
+  static Locale _locale(Language language) {
+    switch (language) {
+      case Language.tr:
+        return const Locale('tr', 'TR');
+      case Language.en:
+        return const Locale('en', 'US');
+      default:
+        return const Locale('en', 'US');
+    }
+  }
 
-void changeLanguage(BuildContext context, String selectedLanguageCode) async {
-  //MyApp.setLocale(context, _locale);
+  static void changeLanguage(Language selectedLanguage) async {
+    await setLocale(selectedLanguage);
+    LngHelper(language: selectedLanguage);
+  }
+
+  static Language get language => _language;
 }

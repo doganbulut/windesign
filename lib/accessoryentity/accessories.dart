@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:windesign/accessoryentity/accessory.dart';
 
 class Accessories {
-  List<Accessory> accessorieslist;
+  final List<Accessory> accessorieslist;
+
   Accessories({
-    this.accessorieslist,
-  });
+    List<Accessory>? accessorieslist,
+  }) : accessorieslist = accessorieslist ?? [];
 
   Accessories copyWith({
-    List<Accessory> accessorieslist,
+    List<Accessory>? accessorieslist,
   }) {
     return Accessories(
       accessorieslist: accessorieslist ?? this.accessorieslist,
@@ -17,16 +18,24 @@ class Accessories {
 
   Map<String, dynamic> toMap() {
     return {
-      'accessorieslist': accessorieslist?.map((x) => x?.toMap())?.toList(),
+      'accessorieslist': accessorieslist.map((x) => x.toMap()).toList(),
     };
   }
 
-  factory Accessories.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory Accessories.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      return Accessories();
+    }
+
+    List<dynamic>? accessoryMaps = map['accessorieslist'];
+    if (accessoryMaps == null || accessoryMaps.isEmpty) {
+      return Accessories();
+    }
 
     return Accessories(
-      accessorieslist: List<Accessory>.from(
-          map['accessorieslist']?.map((x) => Accessory.fromMap(x))),
+      accessorieslist: accessoryMaps
+          .map((x) => Accessory.fromMap(x as Map<String, dynamic>))
+          .toList(),
     );
   }
 

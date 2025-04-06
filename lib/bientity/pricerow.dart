@@ -1,25 +1,26 @@
 import 'dart:convert';
 
 class PriceRow {
-  String code;
-  String name;
-  String type;
-  String unitof;
-  double unitprice;
+  final String code;
+  final String name;
+  final String type;
+  final String unitof;
+  final double unitprice;
+
   PriceRow({
-    this.code,
-    this.name,
-    this.type,
-    this.unitof,
-    this.unitprice,
+    required this.code,
+    required this.name,
+    required this.type,
+    required this.unitof,
+    required this.unitprice,
   });
 
   PriceRow copyWith({
-    String code,
-    String name,
-    String type,
-    String unitof,
-    double unitprice,
+    String? code,
+    String? name,
+    String? type,
+    String? unitof,
+    double? unitprice,
   }) {
     return PriceRow(
       code: code ?? this.code,
@@ -40,15 +41,17 @@ class PriceRow {
     };
   }
 
-  factory PriceRow.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory PriceRow.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
 
     return PriceRow(
-      code: map['code'],
-      name: map['name'],
-      type: map['type'],
-      unitof: map['unitof'],
-      unitprice: map['unitprice'],
+      code: map['code'] ?? '',
+      name: map['name'] ?? '',
+      type: map['type'] ?? '',
+      unitof: map['unitof'] ?? '',
+      unitprice: map['unitprice'] ?? 0.0,
     );
   }
 

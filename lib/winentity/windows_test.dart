@@ -1,3 +1,4 @@
+import 'package:windesign/profentity/manufacturer.dart';
 import 'package:windesign/profentity/profile.dart';
 
 import 'cellunit.dart';
@@ -9,46 +10,45 @@ import 'window.dart';
 class WindowsTest {
   List<Part> cuttingParts = [];
   List<CellUnit> cellUnits = [];
-  PWindow firstWin;
-  PWindow secondWin;
-  PWindow thirdWin;
-  ProfileTest profilemock;
-  Profile frameProfile;
-  Profile mullionProfile;
-  Profile sashProfile;
+  PWindow? firstWin;
+  PWindow? secondWin;
+  PWindow? thirdWin;
+  Profile? frameProfile;
+  Profile? mullionProfile;
+  Profile? sashProfile;
 
   void testMakeWin() {
-    profilemock = new ProfileTest();
-    profilemock.createData();
+    Manufacturer manufacturer = ProfileTest().manufacturer;
 
-    var profiles = profilemock.manufacturer.series
+    var profiles = manufacturer.series
         .firstWhere((element) => element.name == "Carizma")
         .profiles;
 
-    frameProfile = profiles.firstWhere((element) => element.type == "frame");
+    frameProfile =
+        profiles.firstWhere((element) => element.type.name == "frame");
 
-    firstWin = PWindow.create(1, 1, frameProfile, 2721, 1276);
+    firstWin = PWindow.create(1, 1, frameProfile!, 2721, 1276);
 
     mullionProfile =
-        profiles.firstWhere((element) => element.type == "mullion");
+        profiles.firstWhere((element) => element.type.name == "mullion");
 
-    sashProfile = profiles.firstWhere((element) => element.type == "sash");
+    sashProfile = profiles.firstWhere((element) => element.type.name == "sash");
 
     //firstWin.frame.addVerticalCenterMullion(mullionProfile, 1);
     List<double> muls = [];
     muls.add(700);
     muls.add(2021);
-    firstWin.frame.addVerticalMullion(mullionProfile, muls);
+    firstWin!.frame.addVerticalMullion(mullionProfile!, muls);
     //firstWin.frame.addHorizontalMullion(mullionProfile, muls);
-    firstWin.frame.computeCells();
+    firstWin!.frame.computeCells();
 
-    firstWin.frame.cells[0]
-        .createSashCell(sashProfile, "rightdouble", 8, "cam01", "çift cam", 90);
+    firstWin!.frame.cells[0].createSashCell(
+        sashProfile!, "rightdouble", 8, "cam01", "çift cam", 90);
 
-    firstWin.frame.cells[1].createCellUnit("cam01", "çift cam", 90);
+    firstWin!.frame.cells[1].createCellUnit("cam01", "çift cam", 90);
 
-    firstWin.frame.cells[2]
-        .createSashCell(sashProfile, "left", 8, "cam01", "çift cam", 90);
+    firstWin!.frame.cells[2]
+        .createSashCell(sashProfile!, "left", 8, "cam01", "çift cam", 90);
 
     //List<double> muls2 = new List<double>();
     //muls2.add(400);
@@ -80,25 +80,25 @@ class WindowsTest {
 
     cellUnits.clear();
     cuttingParts.clear();
-    cuttingParts.add(firstWin.frame.left);
-    cuttingParts.add(firstWin.frame.right);
-    cuttingParts.add(firstWin.frame.top);
-    cuttingParts.add(firstWin.frame.bottom);
+    cuttingParts.add(firstWin!.frame.left!);
+    cuttingParts.add(firstWin!.frame.right!);
+    cuttingParts.add(firstWin!.frame.top!);
+    cuttingParts.add(firstWin!.frame.bottom!);
 
     print("Ana Pencere Orta Kayıtları");
-    for (var m1 in firstWin.frame.mullions) {
+    for (var m1 in firstWin!.frame.mullions) {
       cuttingParts.add(m1.part);
       print(m1.toString());
     }
 
     print("Hücreler");
-    for (var c1 in firstWin.frame.cells) {
+    for (var c1 in firstWin!.frame.cells) {
       print(c1);
       printCell(c1);
       if (c1.unit != null) print(c1.unit);
       if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
+        print(c1.sash!);
+        print(c1.sash!.unit);
       }
     }
 
@@ -121,6 +121,7 @@ class WindowsTest {
     return;
   }
 
+/*
   void testMakeWin2() {
     ProfileTest profilemock = new ProfileTest();
     profilemock.createData();
@@ -253,7 +254,7 @@ class WindowsTest {
 
     return;
   }
-
+*/
   printCell(Wincell cell) {
     if (cell.cells.length != 0) {
       for (var mullion in cell.mullions) {
@@ -264,17 +265,17 @@ class WindowsTest {
         print(icell);
         printCell(icell);
         if (icell.unit != null) {
-          cellUnits.add(icell.unit);
+          cellUnits.add(icell.unit!);
           print(icell.unit);
         }
         if (icell.sash != null) {
-          cuttingParts.add(icell.sash.left);
-          cuttingParts.add(icell.sash.right);
-          cuttingParts.add(icell.sash.top);
-          cuttingParts.add(icell.sash.bottom);
+          cuttingParts.add(icell.sash!.left);
+          cuttingParts.add(icell.sash!.right);
+          cuttingParts.add(icell.sash!.top);
+          cuttingParts.add(icell.sash!.bottom);
           print(icell.sash);
-          cellUnits.add(icell.sash.unit);
-          print(icell.sash.unit);
+          cellUnits.add(icell.sash!.unit);
+          print(icell.sash!.unit);
         }
       }
     }

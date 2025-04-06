@@ -1,21 +1,21 @@
 import 'dart:convert';
-
 import 'package:windesign/bientity/pricerow.dart';
 
 class OfferUnit {
-  PriceRow pricerow;
-  double amount;
-  double total;
+  final PriceRow pricerow;
+  final double amount;
+  final double total;
+
   OfferUnit({
-    this.pricerow,
-    this.amount,
-    this.total,
+    required this.pricerow,
+    required this.amount,
+    required this.total,
   });
 
   OfferUnit copyWith({
-    PriceRow pricerow,
-    double amount,
-    double total,
+    PriceRow? pricerow,
+    double? amount,
+    double? total,
   }) {
     return OfferUnit(
       pricerow: pricerow ?? this.pricerow,
@@ -26,19 +26,25 @@ class OfferUnit {
 
   Map<String, dynamic> toMap() {
     return {
-      'pricerow': pricerow?.toMap(),
+      'pricerow': pricerow.toMap(),
       'amount': amount,
       'total': total,
     };
   }
 
-  factory OfferUnit.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
+  factory OfferUnit.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      throw ArgumentError("Map cannot be null");
+    }
+
+    if (map['pricerow'] == null) {
+      throw ArgumentError("PriceRow cannot be null");
+    }
 
     return OfferUnit(
       pricerow: PriceRow.fromMap(map['pricerow']),
-      amount: map['amount'],
-      total: map['total'],
+      amount: map['amount'] ?? 0.0,
+      total: map['total'] ?? 0.0,
     );
   }
 

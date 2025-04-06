@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -14,11 +15,12 @@ class CustomerPageScreen extends StatefulWidget {
 }
 
 class _CustomerPageScreenState extends State<CustomerPageScreen> {
-  List<String> fields;
-  List<PlutoColumn> cols;
-  List<PlutoRow> rows;
-  List<Customer> customers;
-  PlutoGridStateManager stateManager;
+  List<String>? fields;
+  List<PlutoColumn>? cols;
+  List<PlutoRow>? rows;
+  List<Customer>? customers;
+  PlutoGridStateManager? stateManager;
+  final String customerEndpoint = "customer";
 
   PlutoGridSelectingMode gridSelectingMode = PlutoGridSelectingMode.row;
 
@@ -74,25 +76,23 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
       info8: "info8",
       info9: "info9",
     );
-    var jj = c1.toJson();
-    print(jj);
   }
 
   void handleAddRowButton() {
-    List<PlutoRow> rows = [GridHelper.rowByColumns(cols)];
-    stateManager.appendRows(rows);
+    List<PlutoRow> rows = [GridHelper.rowByColumns(cols!)];
+    stateManager!.appendRows(rows);
   }
 
   void handleRemoveCurrentRowButton() {
-    stateManager.removeCurrentRow();
+    stateManager!.removeCurrentRow();
   }
 
   void handleRemoveSelectedRowsButton() {
-    stateManager.removeRows(stateManager.currentSelectingRows);
+    stateManager!.removeRows(stateManager!.currentSelectingRows);
   }
 
   void handleFiltering() {
-    stateManager.setShowColumnFilter(!stateManager.showColumnFilter);
+    stateManager!.setShowColumnFilter(!stateManager!.showColumnFilter);
   }
 
   void setGridSelectingMode(PlutoGridSelectingMode mode) {
@@ -102,19 +102,23 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
 
     setState(() {
       gridSelectingMode = mode;
-      stateManager.setSelectingMode(mode);
+      stateManager!.setSelectingMode(mode);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<List<Customer>>(
       future: getCustomerList(),
       builder: (context, AsyncSnapshot<List<Customer>> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData) {
           customers = snapshot.data;
-          loadColumns(fields);
-          loadRows(customers);
+          cols = loadColumns(fields!);
+          rows = loadRows(customers!);
           return Scaffold(
             appBar: AppBar(
               title: const Text('Customers'),
@@ -143,44 +147,22 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
                           child: const Text('Toggle filtering'),
                           onPressed: handleFiltering,
                         ),
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton(
-                            value: gridSelectingMode,
-                            items: PlutoGridStateManager.selectingModes
-                                .map<DropdownMenuItem<PlutoGridSelectingMode>>(
-                                    (PlutoGridSelectingMode item) {
-                              final color = gridSelectingMode == item
-                                  ? Colors.blue
-                                  : null;
-
-                              return DropdownMenuItem<PlutoGridSelectingMode>(
-                                value: item,
-                                child: Text(
-                                  item.toShortString(),
-                                  style: TextStyle(color: color),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (PlutoGridSelectingMode mode) {
-                              setGridSelectingMode(mode);
-                            },
-                          ),
-                        ),
                       ],
                     ),
                   ),
                   Expanded(
                     child: PlutoGrid(
-                      columns: cols,
-                      rows: rows,
+                      columns: cols!,
+                      rows: rows!,
                       onChanged: (PlutoGridOnChangedEvent event) {
                         print(event.row);
-                        toCustomer(event.row);
+                        try {
+                          toCustomer(event.row);
+                        } catch (e) {
+                          print('Error converting row to customer: $e');
+                        }
                       },
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager.setSelectingMode(gridSelectingMode);
-                      },
+                      onLoaded: (PlutoGridOnLoadedEvent event) {},
                     ),
                   ),
                 ],
@@ -188,109 +170,112 @@ class _CustomerPageScreenState extends State<CustomerPageScreen> {
             ),
           );
         } else {
-          return Container();
+          return Center(child: Text('No data found.'));
         }
       },
     );
   }
 
   List<PlutoColumn> loadColumns(List<String> columns) {
-    cols = [];
-    for (var column in columns) {
-      cols.add(
-        PlutoColumn(
-          title: column,
-          field: column,
-          type: PlutoColumnType.text(),
-        ),
-      );
-    }
-    return cols;
+    return columns
+        .map((column) => PlutoColumn(
+              title: column,
+              field: column,
+              type: PlutoColumnType.text(),
+            ))
+        .toList();
   }
 
   Customer toCustomer(PlutoRow row) {
-    return new Customer(
-      code: row.cells['code'].value,
-      name: row.cells['name'].value,
-      phone: row.cells['phone'].value,
-      fax: row.cells['fax'].value,
-      email: row.cells['email'].value,
-      contactName1: row.cells['contactName1'].value,
-      contactName1Phone: row.cells['contactName1Phone'].value,
-      contactName2: row.cells['contactName2'].value,
-      contactName2Phone: row.cells['contactName2Phone'].value,
-      address1: row.cells['address1'].value,
-      address2: row.cells['address2'].value,
-      address3: row.cells['address3'].value,
-      info1: row.cells['info1'].value,
-      info2: row.cells['info2'].value,
-      info3: row.cells['info3'].value,
-      info4: row.cells['info4'].value,
-      info5: row.cells['info5'].value,
-      info6: row.cells['info6'].value,
-      info7: row.cells['info7'].value,
-      info8: row.cells['info8'].value,
-      info9: row.cells['info9'].value,
-    );
+    try {
+      return new Customer(
+        code: row.cells['code']!.value,
+        name: row.cells['name']!.value,
+        phone: row.cells['phone']!.value,
+        fax: row.cells['fax']!.value,
+        email: row.cells['email']!.value,
+        contactName1: row.cells['contactName1']!.value,
+        contactName1Phone: row.cells['contactName1Phone']!.value,
+        contactName2: row.cells['contactName2']!.value,
+        contactName2Phone: row.cells['contactName2Phone']!.value,
+        address1: row.cells['address1']!.value,
+        address2: row.cells['address2']!.value,
+        address3: row.cells['address3']!.value,
+        info1: row.cells['info1']!.value,
+        info2: row.cells['info2']!.value,
+        info3: row.cells['info3']!.value,
+        info4: row.cells['info4']!.value,
+        info5: row.cells['info5']!.value,
+        info6: row.cells['info6']!.value,
+        info7: row.cells['info7']!.value,
+        info8: row.cells['info8']!.value,
+        info9: row.cells['info9']!.value,
+      );
+    } catch (e) {
+      print('Error in toCustomer: $e');
+      throw e;
+    }
   }
 
   List<PlutoRow> loadRows(List<Customer> customers) {
-    rows = [];
-    for (var customer in customers) {
-      rows.add(
-        PlutoRow(
-          cells: {
-            'code': PlutoCell(value: customer.code),
-            'name': PlutoCell(value: customer.name),
-            'phone': PlutoCell(value: customer.phone),
-            'fax': PlutoCell(value: customer.fax),
-            'email': PlutoCell(value: customer.email),
-            'contactName1': PlutoCell(value: customer.contactName1),
-            'contactName1Phone': PlutoCell(value: customer.contactName1Phone),
-            'contactName2': PlutoCell(value: customer.contactName2),
-            'contactName2Phone': PlutoCell(value: customer.contactName2Phone),
-            'address1': PlutoCell(value: customer.address1),
-            'address2': PlutoCell(value: customer.address2),
-            'address3': PlutoCell(value: customer.address3),
-            'info1': PlutoCell(value: customer.info1),
-            'info2': PlutoCell(value: customer.info2),
-            'info3': PlutoCell(value: customer.info3),
-            'info4': PlutoCell(value: customer.info4),
-            'info5': PlutoCell(value: customer.info5),
-            'info6': PlutoCell(value: customer.info6),
-            'info7': PlutoCell(value: customer.info7),
-            'info8': PlutoCell(value: customer.info8),
-            'info9': PlutoCell(value: customer.info9),
-          },
-        ),
-      );
-    }
-    return rows;
+    return customers
+        .map((customer) => PlutoRow(
+              cells: {
+                'code': PlutoCell(value: customer.code),
+                'name': PlutoCell(value: customer.name),
+                'phone': PlutoCell(value: customer.phone),
+                'fax': PlutoCell(value: customer.fax),
+                'email': PlutoCell(value: customer.email),
+                'contactName1': PlutoCell(value: customer.contactName1),
+                'contactName1Phone':
+                    PlutoCell(value: customer.contactName1Phone),
+                'contactName2': PlutoCell(value: customer.contactName2),
+                'contactName2Phone':
+                    PlutoCell(value: customer.contactName2Phone),
+                'address1': PlutoCell(value: customer.address1),
+                'address2': PlutoCell(value: customer.address2),
+                'address3': PlutoCell(value: customer.address3),
+                'info1': PlutoCell(value: customer.info1),
+                'info2': PlutoCell(value: customer.info2),
+                'info3': PlutoCell(value: customer.info3),
+                'info4': PlutoCell(value: customer.info4),
+                'info5': PlutoCell(value: customer.info5),
+                'info6': PlutoCell(value: customer.info6),
+                'info7': PlutoCell(value: customer.info7),
+                'info8': PlutoCell(value: customer.info8),
+                'info9': PlutoCell(value: customer.info9),
+              },
+            ))
+        .toList();
   }
 
   Future<List<Customer>> getCustomerList() async {
     List<Customer> result = [];
     try {
       ApiHelper api = new ApiHelper();
-      var jlist = await api.getAll("customer");
-      print(jlist);
-      List maps = jsonDecode(jlist);
+      var jsonResponse = await api.getAll(customerEndpoint);
+      print(jsonResponse);
+      List maps = jsonDecode(jsonResponse);
       for (var item in maps) {
         try {
           var cust = Customer.fromMap(item);
           result.add(cust);
           print(cust);
+        } on FormatException catch (e) {
+          print('JSON parsing error: $e');
+          // Handle JSON parsing error
         } catch (e) {
-          print(e);
+          print('Error processing item: $e');
+          // Handle other errors
         }
       }
+    } on TimeoutException catch (e) {
+      print('Request timed out: $e');
+      // Handle timeout
     } catch (e) {
-      print(e);
+      print('An unexpected error occurred: $e');
+      // Handle other errors
     }
     return result;
   }
-
-
-
-  
 }

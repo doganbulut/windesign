@@ -1,13 +1,8 @@
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String> reverseMap;
+class EnumValues<T extends Enum> {
+  final Map<String, T> map;
+  final Map<T, String> reverseMap;
 
-  EnumValues(this.map);
+  EnumValues(this.map) : reverseMap = map.map((k, v) => MapEntry(v, k));
 
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
-  }
+  Map<T, String> get reverse => reverseMap;
 }
