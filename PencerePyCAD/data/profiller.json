@@ -1,0 +1,5 @@
+[
+    {"ad": "Kasa Profili 60mm", "tip": "kasa_60mm", "kesit_geometrisi": {"genislik": 60, "yukseklik": 50}, "birim_fiyat": 100, "renk": "Beyaz"},
+    {"ad": "Kanat Profili 70mm", "tip": "kanat_70mm", "kesit_geometrisi": {"genislik": 70, "yukseklik": 60}, "birim_fiyat": 120, "renk": "Beyaz"},
+    {"ad": "Orta Kayıt Profili", "tip": "orta_kayit_60mm", "kesit_geometrisi": {"genislik": 60, "yukseklik": 80}, "birim_fiyat": 110, "renk": "Antrasit"}
+]

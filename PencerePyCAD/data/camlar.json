@@ -1,0 +1,5 @@
+[
+    {"ad": "Çift Cam Standart", "tip": "cift_cam_standart", "kalinlik_str": "4+16+4", "birim_metrekare_fiyat": 250},
+    {"ad": "Konfor Cam", "tip": "konfor_cam", "kalinlik_str": "4+12+4+4", "birim_metrekare_fiyat": 350, "u_degeri": 1.1},
+    {"ad": "Triple Cam", "tip": "triple_cam", "kalinlik_str": "4+10+4+10+4", "birim_metrekare_fiyat": 450, "u_degeri": 0.8}
+]
