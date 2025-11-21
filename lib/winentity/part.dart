@@ -1,30 +1,32 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'dart:math' as math;
+
 import 'package:windesign/accessoryentity/accessory.dart';
 import 'package:windesign/profentity/profile.dart';
 
 class Part {
-  String profileCode;
-  double leftAngle;
-  double rightAngle;
-  double len;
-  double inlen;
-  double cutlen;
-  double leftEar;
-  double rightEar;
-  Profile profile;
-  List<Accessory> accessories;
+  late String profileCode;
+  late double leftAngle;
+  late double rightAngle;
+  late double len;
+  late double inlen;
+  late double cutlen;
+  late double leftEar;
+  late double rightEar;
+  late Profile profile;
+  late List<Accessory> accessories;
   Part({
-    this.profileCode,
-    this.leftAngle,
-    this.rightAngle,
-    this.len,
-    this.inlen,
-    this.cutlen,
-    this.leftEar,
-    this.rightEar,
-    this.profile,
-    this.accessories,
+    required this.profileCode,
+    required this.leftAngle,
+    required this.rightAngle,
+    required this.len,
+    required this.inlen,
+    required this.cutlen,
+    required this.leftEar,
+    required this.rightEar,
+    required this.profile,
+    required this.accessories,
   });
 
   Part.create(
@@ -34,6 +36,8 @@ class Part {
     this.rightAngle = rightAngle;
     this.len = len;
     this.profile = profile;
+    this.accessories = [];
+    this.cutlen = 0;
     calculateInLen();
   }
 
@@ -64,34 +68,8 @@ class Part {
   }
 
   double round(double value, int places) {
-    double mod = math.pow(10.0, places);
+    num mod = math.pow(10.0, places);
     return ((value * mod).round().toDouble() / mod);
-  }
-
-  Part copyWith({
-    String profileCode,
-    double leftAngle,
-    double rightAngle,
-    double len,
-    double inlen,
-    double cutlen,
-    double leftEar,
-    double rightEar,
-    Profile profile,
-    List<Accessory> accessories,
-  }) {
-    return Part(
-      profileCode: profileCode ?? this.profileCode,
-      leftAngle: leftAngle ?? this.leftAngle,
-      rightAngle: rightAngle ?? this.rightAngle,
-      len: len ?? this.len,
-      inlen: inlen ?? this.inlen,
-      cutlen: cutlen ?? this.cutlen,
-      leftEar: leftEar ?? this.leftEar,
-      rightEar: rightEar ?? this.rightEar,
-      profile: profile ?? this.profile,
-      accessories: accessories ?? this.accessories,
-    );
   }
 
   Map<String, dynamic> toMap() {
@@ -104,14 +82,12 @@ class Part {
       'cutlen': cutlen,
       'leftEar': leftEar,
       'rightEar': rightEar,
-      'profile': profile?.toMap(),
-      'accessories': accessories?.map((x) => x?.toMap())?.toList(),
+      'profile': profile.toMap(),
+      'accessories': accessories.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Part.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Part(
       profileCode: map['profileCode'],
       leftAngle: map['leftAngle'],

@@ -9,13 +9,13 @@ import 'window.dart';
 class WindowsTest {
   List<Part> cuttingParts = [];
   List<CellUnit> cellUnits = [];
-  PWindow firstWin;
-  PWindow secondWin;
-  PWindow thirdWin;
-  ProfileTest profilemock;
-  Profile frameProfile;
-  Profile mullionProfile;
-  Profile sashProfile;
+  late PWindow firstWin;
+  late PWindow secondWin;
+  late PWindow thirdWin;
+  late ProfileTest profilemock;
+  late Profile frameProfile;
+  late Profile mullionProfile;
+  late Profile sashProfile;
 
   void testMakeWin() {
     profilemock = new ProfileTest();
@@ -95,12 +95,10 @@ class WindowsTest {
     for (var c1 in firstWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
-    }
+      print(c1.unit);
+      print(c1.sash);
+      if (c1.sash != null) print(c1.sash!.unit);
+        }
 
     print("Kesim Listesi");
     for (var part in cuttingParts) {
@@ -161,12 +159,10 @@ class WindowsTest {
     for (var c1 in secondWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
-    }
+      print(c1.unit);
+      print(c1.sash);
+      if (c1.sash != null) print(c1.sash!.unit);
+        }
 
     print("Kesim Listesi");
     for (var part in cuttingParts) {
@@ -228,12 +224,10 @@ class WindowsTest {
     for (var c1 in thirdWin.frame.cells) {
       print(c1);
       printCell(c1);
-      if (c1.unit != null) print(c1.unit);
-      if (c1.sash != null) {
-        print(c1.sash);
-        print(c1.sash.unit);
-      }
-    }
+      print(c1.unit);
+      print(c1.sash);
+      if (c1.sash != null) print(c1.sash!.unit);
+        }
 
     print("Kesim Listesi");
     for (var part in cuttingParts) {
@@ -264,17 +258,17 @@ class WindowsTest {
         print(icell);
         printCell(icell);
         if (icell.unit != null) {
-          cellUnits.add(icell.unit);
+          cellUnits.add(icell.unit!);
           print(icell.unit);
         }
         if (icell.sash != null) {
-          cuttingParts.add(icell.sash.left);
-          cuttingParts.add(icell.sash.right);
-          cuttingParts.add(icell.sash.top);
-          cuttingParts.add(icell.sash.bottom);
+          cuttingParts.add(icell.sash!.left);
+          cuttingParts.add(icell.sash!.right);
+          cuttingParts.add(icell.sash!.top);
+          cuttingParts.add(icell.sash!.bottom);
           print(icell.sash);
-          cellUnits.add(icell.sash.unit);
-          print(icell.sash.unit);
+          cellUnits.add(icell.sash!.unit);
+          print(icell.sash!.unit);
         }
       }
     }

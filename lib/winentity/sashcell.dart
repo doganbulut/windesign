@@ -6,29 +6,29 @@ import 'cellunit.dart';
 import 'part.dart';
 
 class Sashcell {
-  String name;
-  Profile profile;
-  Part left;
-  Part right;
-  Part top;
-  Part bottom;
-  double sashHeight;
-  double sashWidth;
-  double sashMargin;
-  String openDirection;
-  CellUnit unit;
+  late String name;
+  late Profile profile;
+  late Part left;
+  late Part right;
+  late Part top;
+  late Part bottom;
+  late double sashHeight;
+  late double sashWidth;
+  late double sashMargin;
+  late String openDirection;
+  late CellUnit unit;
   Sashcell({
-    this.name,
-    this.profile,
-    this.left,
-    this.right,
-    this.top,
-    this.bottom,
-    this.sashHeight,
-    this.sashWidth,
-    this.sashMargin,
-    this.openDirection,
-    this.unit,
+    required this.name,
+    required this.profile,
+    required this.left,
+    required this.right,
+    required this.top,
+    required this.bottom,
+    required this.sashHeight,
+    required this.sashWidth,
+    required this.sashMargin,
+    required this.openDirection,
+    required this.unit,
   });
 
   Sashcell.create(
@@ -77,22 +77,20 @@ class Sashcell {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'profile': profile?.toJson(),
-      'left': left?.toMap(),
-      'right': right?.toMap(),
-      'top': top?.toMap(),
-      'bottom': bottom?.toMap(),
+      'profile': profile.toJson(),
+      'left': left.toMap(),
+      'right': right.toMap(),
+      'top': top.toMap(),
+      'bottom': bottom.toMap(),
       'sashHeight': sashHeight,
       'sashWidth': sashWidth,
       'sashMargin': sashMargin,
       'openDirection': openDirection,
-      'unit': unit?.toMap(),
+      'unit': unit.toMap(),
     };
   }
 
   factory Sashcell.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Sashcell(
       name: map['name'],
       profile: Profile.fromJson(map['profile']),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'ui/localization/languagehelper.dart';
 import 'ui/screens/mainlayout.dart';
 import 'ui/screens/manufacturer/manufacturerlist.dart';
+import 'ui/screens/windraw_view.dart';
 import 'windrawer/windraw.dart';
 
 /// main is entry point of Flutter application
@@ -15,16 +16,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(accentColor: Colors.red),
+      theme: ThemeData.light().copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.red)),
       debugShowCheckedModeBanner: false,
-      home: ManufacturerListScreen(),
+      home: WinDrawView(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

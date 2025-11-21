@@ -1,19 +1,19 @@
 import 'dart:convert';
 
 class CellUnit {
-  String name;
-  String type;
-  String typeName;
-  double unitprice;
-  double unitHeight;
-  double unitWidth;
+  late String name;
+  late String type;
+  late String typeName;
+  late double unitprice;
+  late double unitHeight;
+  late double unitWidth;
   CellUnit({
-    this.name,
-    this.type,
-    this.typeName,
-    this.unitprice,
-    this.unitHeight,
-    this.unitWidth,
+    required this.name,
+    required this.type,
+    required this.typeName,
+    required this.unitprice,
+    required this.unitHeight,
+    required this.unitWidth,
   });
 
   CellUnit.create(String type, String typeName, String name, double cellHeight,
@@ -54,8 +54,6 @@ class CellUnit {
   }
 
   factory CellUnit.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return CellUnit(
       name: map['name'],
       type: map['type'],

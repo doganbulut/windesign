@@ -1,22 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:windesign/helpers/apihelper.dart';
 import 'package:windesign/profentity/manufacturer.dart';
 import 'package:windesign/profentity/serie.dart';
-import 'package:windesign/ui/localization/languagehelper.dart';
 import 'package:windesign/ui/screens/profileforms/editprofilepage.dart';
 
 class ListManufacturerPage extends StatefulWidget {
-  ListManufacturerPage({Key key}) : super(key: key);
+  ListManufacturerPage({required Key key}) : super(key: key);
 
   @override
   _ListManufacturerPageState createState() => _ListManufacturerPageState();
 }
 
 class _ListManufacturerPageState extends State<ListManufacturerPage> {
-  List<Manufacturer> activeManufacturers;
-  Future<List<Manufacturer>> manufacturers;
+  late List<Manufacturer> activeManufacturers;
+  late Future<List<Manufacturer>> manufacturers;
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +30,13 @@ class _ListManufacturerPageState extends State<ListManufacturerPage> {
           (BuildContext context, AsyncSnapshot<List<Manufacturer>> snapshot) {
         if (snapshot.hasData) {
           return DefaultTabController(
-            length: snapshot.data.length, // This is the number of tabs.
+            length: snapshot.data!.length, // This is the number of tabs.
             child: Scaffold(
               appBar: AppBar(
                 title: const Text('Manufacturer'),
                 bottom: TabBar(
                   // These are the widgets to put in each tab in the tab bar.
-                  tabs: snapshot.data
+                  tabs: snapshot.data!
                       .map((Manufacturer manufacturer) =>
                           Tab(text: manufacturer.name))
                       .toList(),
@@ -46,7 +44,7 @@ class _ListManufacturerPageState extends State<ListManufacturerPage> {
               ),
               body: Container(
                 child: TabBarView(
-                  children: snapshot.data.map((Manufacturer manufacturer) {
+                  children: snapshot.data!.map((Manufacturer manufacturer) {
                     return Center(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,7 +76,7 @@ class _ListManufacturerPageState extends State<ListManufacturerPage> {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (_) => EditProfilePage(
                       manufacturer: manufacturer,
-                      serie: value,
+                      serie: value!,
                     )));
           },
         ),

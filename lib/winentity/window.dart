@@ -5,25 +5,25 @@ import 'part.dart';
 import 'wincell.dart';
 
 class PWindow {
-  int order;
-  int count;
-  double width;
-  double height;
-  String info1;
-  String info2;
-  String info3;
-  String info4;
-  String info5;
-  String info6;
-  String info7;
-  Wincell frame;
-  String addtype;
-  Offset start;
+  late int order;
+  late int count;
+  late double width;
+  late double height;
+  String? info1;
+  String? info2;
+  String? info3;
+  String? info4;
+  String? info5;
+  String? info6;
+  String? info7;
+  late Wincell frame;
+  late String addtype;
+  late Offset start;
   PWindow({
-    this.order,
-    this.count,
-    this.width,
-    this.height,
+    required this.order,
+    required this.count,
+    required this.width,
+    required this.height,
     this.info1,
     this.info2,
     this.info3,
@@ -31,9 +31,9 @@ class PWindow {
     this.info5,
     this.info6,
     this.info7,
-    this.frame,
-    this.addtype,
-    this.start,
+    required this.frame,
+    required this.addtype,
+    required this.start,
   });
 
   PWindow.create(
@@ -96,14 +96,13 @@ class PWindow {
       'info5': info5,
       'info6': info6,
       'info7': info7,
-      'frame': frame?.toMap(),
+      'frame': frame.toMap(),
       'addtype': addtype,
-      'start': start?.dx.toString() + ':' + start?.dy.toString(),
+      'start': start.dx.toString() + ':' + start.dy.toString(),
     };
   }
 
   factory PWindow.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
     var offsets = map['start'].toString().split(':');
 
     return PWindow(

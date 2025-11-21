@@ -5,7 +5,7 @@ import 'language/languages.dart';
 
 class LngHelper {
   static final LngHelper _singleton = LngHelper._internal();
-  Languages words;
+  late Languages words;
 
   factory LngHelper() {
     return _singleton;

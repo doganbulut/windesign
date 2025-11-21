@@ -4,42 +4,42 @@ import 'package:windesign/profentity/profile.dart';
 
 import 'cellunit.dart';
 import 'direction.dart';
-import 'mullion .dart';
+import 'mullion.dart';
 import 'part.dart';
 import 'sashcell.dart';
 
 class Wincell {
-  String id;
-  Part left;
-  Part right;
-  Part top;
-  Part bottom;
-  CellUnit unit;
-  Sashcell sash;
+  late String id;
+  late Part left;
+  late Part right;
+  late Part top;
+  late Part bottom;
+  CellUnit? unit;
+  Sashcell? sash;
 
-  double xPoint;
-  double yPoint;
-  double inWidth;
-  double inHeight;
+  late double xPoint;
+  late double yPoint;
+  late double inWidth;
+  late double inHeight;
 
-  List<Mullion> mullions;
-  List<Wincell> cells;
-  List<Sashcell> tmpSash;
-  List<CellUnit> tmpUnits;
+  late List<Mullion> mullions;
+  late List<Wincell> cells;
+  late List<Sashcell> tmpSash;
+  late List<CellUnit> tmpUnits;
   Wincell({
-    this.id,
-    this.left,
-    this.right,
-    this.top,
-    this.bottom,
+    required this.id,
+    required this.left,
+    required this.right,
+    required this.top,
+    required this.bottom,
     this.unit,
     this.sash,
-    this.xPoint,
-    this.yPoint,
-    this.inWidth,
-    this.inHeight,
-    this.mullions,
-    this.cells,
+    required this.xPoint,
+    required this.yPoint,
+    required this.inWidth,
+    required this.inHeight,
+    required this.mullions,
+    required this.cells,
   });
 
   Wincell.create(String id) {
@@ -170,8 +170,8 @@ class Wincell {
       }
 
       for (var cell in cells) {
-        tmpSash.add(cell.sash);
-        tmpUnits.add(cell.unit);
+        if (cell.sash != null) tmpSash.add(cell.sash!);
+        if (cell.unit != null) tmpUnits.add(cell.unit!);
       }
 
       cells.clear();
@@ -208,8 +208,8 @@ class Wincell {
           newcell.xPoint = this.xPoint;
           newcell.yPoint = this.yPoint;
           try {
-            if (tmpSash[i] != null) newcell.sash = tmpSash[i];
-            if (tmpUnits[i] != null) newcell.unit = tmpUnits[i];
+            newcell.sash = tmpSash[i];
+            newcell.unit = tmpUnits[i];
           } catch (e) {}
 
           cells.add(newcell);
@@ -245,8 +245,8 @@ class Wincell {
           newcell.bottom = this.bottom;
           newcell.right = this.right;
           try {
-            if (tmpSash[i] != null) newcell.sash = tmpSash[i];
-            if (tmpUnits[i] != null) newcell.unit = tmpUnits[i];
+            newcell.sash = tmpSash[i];
+            newcell.unit = tmpUnits[i];
           } catch (e) {}
 
           cells.add(newcell);
@@ -290,8 +290,8 @@ class Wincell {
               (this.mullions[i - 1].part.profile.width / 2);
         }
         try {
-          if (tmpSash[i] != null) newcell.sash = tmpSash[i];
-          if (tmpUnits[i] != null) newcell.unit = tmpUnits[i];
+          newcell.sash = tmpSash[i];
+          newcell.unit = tmpUnits[i];
         } catch (e) {}
 
         cells.add(newcell);
@@ -320,32 +320,30 @@ class Wincell {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'left': left?.toMap(),
-      'right': right?.toMap(),
-      'top': top?.toMap(),
-      'bottom': bottom?.toMap(),
+      'left': left.toMap(),
+      'right': right.toMap(),
+      'top': top.toMap(),
+      'bottom': bottom.toMap(),
       'unit': unit?.toMap(),
       'sash': sash?.toMap(),
       'xPoint': xPoint,
       'yPoint': yPoint,
       'inWidth': inWidth,
       'inHeight': inHeight,
-      'mullions': mullions?.map((x) => x?.toMap())?.toList(),
-      'cells': cells?.map((x) => x?.toMap())?.toList(),
+      'mullions': mullions.map((x) => x.toMap()).toList(),
+      'cells': cells.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Wincell.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Wincell(
       id: map['id'],
       left: Part.fromMap(map['left']),
       right: Part.fromMap(map['right']),
       top: Part.fromMap(map['top']),
       bottom: Part.fromMap(map['bottom']),
-      unit: CellUnit.fromMap(map['unit']),
-      sash: Sashcell.fromMap(map['sash']),
+      unit: map['unit'] != null ? CellUnit.fromMap(map['unit']) : null,
+      sash: map['sash'] != null ? Sashcell.fromMap(map['sash']) : null,
       xPoint: map['xPoint'],
       yPoint: map['yPoint'],
       inWidth: map['inWidth'],

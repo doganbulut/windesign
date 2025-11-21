@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
       if (mockUsers[data.name] != data.password) {
         return 'Password does not match';
       }
-      return null;
+      return Future.value("");
     });
   }
 
@@ -27,17 +27,12 @@ class LoginScreen extends StatelessWidget {
       if (!mockUsers.containsKey(name)) {
         return 'Username not exists';
       }
-      return null;
+      return Future.value("");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final inputBorder = BorderRadius.vertical(
-      bottom: Radius.circular(10.0),
-      top: Radius.circular(20.0),
-    );
-
     return FlutterLogin(
       title: Constants.appName,
       //logo: 'assets/images/ecorp.png',
@@ -134,13 +129,13 @@ class LoginScreen extends StatelessWidget {
       //   ),
       // ),
       userValidator: (value) {
-        if (!value.contains('@') || !value.endsWith('.com')) {
+        if (!value!.contains('@') || !value.endsWith('.com')) {
           return "Email must contain '@' and end with '.com'";
         }
         return null;
       },
       passwordValidator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Password is empty';
         }
         return null;

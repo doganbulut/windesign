@@ -15,16 +15,16 @@ class WinDraw {
 
   WinDraw._internal();
 
-  WindowsTest testwin;
-  PWindow activeWindow;
+  late WindowsTest testwin;
+  late PWindow activeWindow;
   List<PWindow> windows = [];
   double windowsWidth = 0;
   double windowsHeight = 0;
   Size imageSize = Size(0, 0);
   Size outputSize = Size(0, 0);
-  FittedSizes fitsize;
-  double ratio;
-  Offset center;
+  late FittedSizes fitsize;
+  late double ratio;
+  late Offset center;
   double spaceWidth = 200;
   double spaceHeight = 200;
 
@@ -60,29 +60,25 @@ class WinDraw {
   }
 
   void testwindata() {
-    if (this.testwin == null) {
-      this.testwin = new WindowsTest();
-      this.testwin.testMakeWin();
-      //this.windows.add(this.testwin.firstWin);
-      //this.testwin.testMakeWin2();
-      //this.windows.add(this.testwin.secondWin);
-      //this.testwin.testMakeWin3();
-      //this.windows.add(this.testwin.thirdWin);
-      //this.activeWindow = this.testwin.firstWin;
-    }
+    this.testwin = new WindowsTest();
+    this.testwin.testMakeWin();
+    this.windows.add(this.testwin.firstWin);
+    //this.testwin.testMakeWin2();
+    //this.windows.add(this.testwin.secondWin);
+    //this.testwin.testMakeWin3();
+    //this.windows.add(this.testwin.thirdWin);
+    this.activeWindow = this.testwin.firstWin;
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'windows': windows?.map((x) => x?.toMap())?.toList(),
+      'windows': windows.map((x) => x.toMap()).toList(),
       'windowsWidth': windowsWidth,
       'windowsHeight': windowsHeight,
     };
   }
 
   fromMap(Map<String, dynamic> map) {
-    if (map == null) return;
-
     windows =
         List<PWindow>.from(map['windows']?.map((x) => PWindow.fromMap(x)));
     windowsWidth = map['windowsWidth'];

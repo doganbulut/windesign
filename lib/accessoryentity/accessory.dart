@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class Accessory {
@@ -5,16 +6,15 @@ class Accessory {
   String name;
   String type;
   Accessory({
-    this.code,
-    this.name,
-    this.type,
+    required this.code,
+    required this.name,
+    required this.type,
   });
-  String parent; //sash,frame,win
 
   Accessory copyWith({
-    String code,
-    String name,
-    String type,
+    String? code,
+    String? name,
+    String? type,
   }) {
     return Accessory(
       code: code ?? this.code,
@@ -24,7 +24,7 @@ class Accessory {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'code': code,
       'name': name,
       'type': type,
@@ -32,20 +32,28 @@ class Accessory {
   }
 
   factory Accessory.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Accessory(
-      code: map['code'],
-      name: map['name'],
-      type: map['type'],
+      code: map['code'] as String,
+      name: map['name'] as String,
+      type: map['type'] as String,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory Accessory.fromJson(String source) =>
-      Accessory.fromMap(json.decode(source));
+      Accessory.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'Accessory(code: $code, name: $name, type: $type)';
+
+  @override
+  bool operator ==(covariant Accessory other) {
+    if (identical(this, other)) return true;
+
+    return other.code == code && other.name == name && other.type == type;
+  }
+
+  @override
+  int get hashCode => code.hashCode ^ name.hashCode ^ type.hashCode;
 }

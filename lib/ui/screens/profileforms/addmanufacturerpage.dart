@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:json_form_generator/json_form_generator.dart';
+
 import 'package:windesign/helpers/apihelper.dart';
 import 'package:windesign/profentity/manufacturer.dart';
 import 'package:windesign/profentity/serie.dart';
@@ -41,12 +41,19 @@ class _AddManufacturerPage extends State<AddManufacturerPage> {
             child: Form(
               key: _formkey,
               child: Column(children: <Widget>[
-                JsonFormGenerator(
-                  form: form,
-                  onChanged: (dynamic value) {
-                    //print(value);
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: LngHelper().words.lblManufacturerInfo,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
                     setState(() {
-                      this.response = value;
+                      this.response = {"name": value};
                     });
                   },
                 ),
@@ -82,14 +89,12 @@ class _AddManufacturerPage extends State<AddManufacturerPage> {
       MapEntry mp = response.entries
           .firstWhere((element) => element.key == 'name', orElse: () => null);
 
-      if (mp != null) {
-        Manufacturer manufacturer =
-            // ignore: deprecated_member_use
-            new Manufacturer(name: mp.value, series: new List<Serie>());
-        ApiHelper api = new ApiHelper();
-        if (await api.postTable('manufacturer', manufacturer.toJson())) {}
-      }
-    } catch (e) {
+      Manufacturer manufacturer =
+          // ignore: deprecated_member_use
+          new Manufacturer(name: mp.value, series: new List<Serie>());
+      ApiHelper api = new ApiHelper();
+      if (await api.postTable('manufacturer', manufacturer.toJson())) {}
+        } catch (e) {
       print(e);
     }
   }

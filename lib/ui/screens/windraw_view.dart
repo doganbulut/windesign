@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:touchable/touchable.dart';
 import 'package:windesign/windrawer/windraw.dart';
 import 'package:windesign/windrawer/winpainter.dart';
 import 'package:windesign/winentity/wincell.dart';
 import 'package:windesign/winentity/window.dart';
 
 class WinDrawView extends StatefulWidget {
-  const WinDrawView({Key key}) : super(key: key);
+  const WinDrawView({Key? key}) : super(key: key);
 
   @override
   _WinDrawViewState createState() => _WinDrawViewState();
@@ -15,8 +14,8 @@ class WinDrawView extends StatefulWidget {
 class _WinDrawViewState extends State<WinDrawView> {
   final double toolbarHeight = 50;
   final double menuHeight = 56;
-  WinPainter winPainter;
-  BuildContext context;
+  late WinPainter winPainter;
+  late BuildContext context;
   String data = '';
 
   @override
@@ -75,7 +74,6 @@ class _WinDrawViewState extends State<WinDrawView> {
             ),
             TextButton(
               child: Text('Json'),
-
               onPressed: () {
                 /** */
                 var pWindow = WinDraw().activeWindow;
@@ -155,12 +153,10 @@ class _WinDrawViewState extends State<WinDrawView> {
                 for (var c1 in pWindow.frame.cells) {
                   print(c1);
                   printCell(c1);
-                  if (c1.unit != null) print(c1.unit);
-                  if (c1.sash != null) {
-                    print(c1.sash);
-                    print(c1.sash.unit);
-                  }
-                }
+                  print(c1.unit);
+                  print(c1.sash);
+                  print(c1.sash?.unit);
+                                }
               },
             ),
           ],
@@ -177,14 +173,10 @@ class _WinDrawViewState extends State<WinDrawView> {
       for (var icell in cell.cells) {
         print(icell);
         printCell(icell);
-        if (icell.unit != null) {
-          print(icell.unit);
-        }
-        if (icell.sash != null) {
-          print(icell.sash);
-          print(icell.sash.unit);
-        }
-      }
+        print(icell.unit);
+              print(icell.sash);
+        print(icell.sash?.unit);
+            }
     }
   }
 
@@ -203,10 +195,15 @@ class _WinDrawViewState extends State<WinDrawView> {
       constraints: BoxConstraints(
           maxWidth: sizeCanvas.width, maxHeight: sizeCanvas.height),
       color: Colors.grey,
-      child: CanvasTouchDetector(
-          builder: (context) => CustomPaint(
-              size: sizeCanvas,
-              painter: this.winPainter = WinPainter(context))),
+      child: GestureDetector(
+        onScaleStart: (_) {},
+        onScaleUpdate: (_) {},
+        onScaleEnd: (_) {},
+        child: CustomPaint(
+          size: sizeCanvas,
+          painter: this.winPainter = WinPainter(context),
+        ),
+      ),
     );
   }
 }

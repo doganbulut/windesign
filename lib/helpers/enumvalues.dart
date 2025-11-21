@@ -1,13 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class EnumValues<T> {
   Map<String, T> map;
-  Map<T, String> reverseMap;
+  late Map<T, String> reverseMap;
 
-  EnumValues(this.map);
+  EnumValues(
+    this.map,
+  );
 
   Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap;
+    return map.map((k, v) => new MapEntry(v, k));
   }
 }

@@ -1,23 +1,31 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'direction.dart';
 import 'part.dart';
 
 class Mullion {
-  int order;
-  Direction direction;
-  double len;
-  double position;
-  double cellposition;
-  Part part;
+  late int order;
+  late Direction direction;
+  late double len;
+  late double position;
+  late double cellposition;
+  late Part part;
   Mullion({
-    this.order,
-    this.direction,
-    this.len,
-    this.position,
-    this.cellposition,
-    this.part,
-  });
+    int? order,
+    Direction? direction,
+    double? len,
+    double? position,
+    double? cellposition,
+    Part? part,
+  }) {
+    if (order != null) this.order = order;
+    if (direction != null) this.direction = direction;
+    if (len != null) this.len = len;
+    if (position != null) this.position = position;
+    if (cellposition != null) this.cellposition = cellposition;
+    if (part != null) this.part = part;
+  }
 
   @override
   String toString() {
@@ -42,16 +50,14 @@ class Mullion {
       'len': len,
       'position': position,
       'cellposition': cellposition,
-      'part': part?.toMap(),
+      'part': part.toMap(),
     };
   }
 
   factory Mullion.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Mullion(
       order: map['order'],
-      direction: directionValues.map[map['direction']],
+      direction: directionValues.map[map['direction']]!,
       len: map['len'],
       position: map['position'],
       cellposition: map['cellposition'],

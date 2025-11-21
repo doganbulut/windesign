@@ -4,11 +4,11 @@ import 'package:windesign/accessoryentity/accessory.dart';
 class Accessories {
   List<Accessory> accessorieslist;
   Accessories({
-    this.accessorieslist,
+    required this.accessorieslist,
   });
 
   Accessories copyWith({
-    List<Accessory> accessorieslist,
+    required List<Accessory> accessorieslist,
   }) {
     return Accessories(
       accessorieslist: accessorieslist ?? this.accessorieslist,
@@ -17,13 +17,11 @@ class Accessories {
 
   Map<String, dynamic> toMap() {
     return {
-      'accessorieslist': accessorieslist?.map((x) => x?.toMap())?.toList(),
+      'accessorieslist': accessorieslist.map((x) => x.toMap()).toList(),
     };
   }
 
   factory Accessories.fromMap(Map<String, dynamic> map) {
-    if (map == null) return null;
-
     return Accessories(
       accessorieslist: List<Accessory>.from(
           map['accessorieslist']?.map((x) => Accessory.fromMap(x))),
