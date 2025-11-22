@@ -12,198 +12,220 @@ class WinDrawView extends StatefulWidget {
 }
 
 class _WinDrawViewState extends State<WinDrawView> {
-  final double toolbarHeight = 50;
-  final double menuHeight = 56;
-  late WinPainter winPainter;
-  late BuildContext context;
   String data = '';
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('WinDesign Studio'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.account_circle),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
         children: [
-          getToolBar(this.toolbarHeight),
-          getCanvas(MediaQuery.of(context).size, this.toolbarHeight),
+          // Top Toolbar
+          Container(
+            height: 70,
+            width: double.infinity,
+            color: theme.colorScheme.surface,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                _buildToolButton(Icons.add_box_outlined, "New Window", () {
+                  _showNewWindowDialog();
+                }),
+                SizedBox(width: 16),
+                _buildToolButton(Icons.grid_on, "Add Mullion", () {
+                  if (WinDraw().windows.isEmpty) return;
+                  
+                  var pWindow = WinDraw().activeWindow;
+                  pWindow.calculateWinParts();
+                  pWindow.frame.addVerticalCenterMullion(
+                      WinDraw().testwin.mullionProfile, 2);
+                  pWindow.frame.computeVerticalMullion();
+                  pWindow.frame.computeCells();
+                  
+                  // Add horizontal mullions to cells
+                  for (var icell in pWindow.frame.cells) {
+                    icell.addHorizontalMullion(
+                        WinDraw().testwin.mullionProfile, [500]);
+                    icell.computeHorizontalMullion();
+                    icell.computeCells();
+                  }
+
+                  // Add sashes
+                  for (var icell in pWindow.frame.cells) {
+                    var j = 0;
+                    for (var jcell in icell.cells) {
+                      if (j == 0)
+                        jcell.createCellUnit("cam01", "çift cam", 90);
+                      else
+                        jcell.createSashCell(WinDraw().testwin.sashProfile,
+                            "rightdouble", 8, "cam01", "çift cam", 90);
+                      ++j;
+                    }
+                  }
+                  setState(() {});
+                }),
+                SizedBox(width: 16),
+                _buildToolButton(Icons.save, "Save JSON", () {
+                  data = WinDraw().toJson();
+                  print(data);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Saved to memory")));
+                }),
+                SizedBox(width: 16),
+                _buildToolButton(Icons.file_upload, "Load JSON", () {
+                  if (data.isNotEmpty) {
+                    WinDraw().fromJson(data);
+                    if (WinDraw().windows.isNotEmpty) {
+                      WinDraw().activeWindow = WinDraw().windows[0];
+                    }
+                    setState(() {});
+                  }
+                }),
+                Spacer(),
+                _buildToolButton(Icons.delete_outline, "Clear", () {
+                  WinDraw().windows.clear();
+                  setState(() {});
+                }),
+              ],
+            ),
+          ),
+          Divider(height: 1, thickness: 1),
+          // Main Content Area
+          Expanded(
+            child: Container(
+              color: theme.colorScheme.background,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return CustomPaint(
+                    size: Size(constraints.maxWidth, constraints.maxHeight),
+                    painter: WinPainter(context),
+                  );
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget getToolBar(double toolHeight) {
-    return SizedBox(
-      height: toolHeight,
-      child: Container(
-        color: Colors.amber,
-        child: ButtonBar(
-          alignment: MainAxisAlignment.start,
-          children: <Widget>[
-            TextButton(
-              child: Text('Create Window'),
-              onPressed: () {
-                /** */
-
-                var frameProfile = WinDraw().testwin.frameProfile;
-                WinDraw().windows.clear();
-                var window = new PWindow.create(2, 1, frameProfile, 3000, 1500);
-                WinDraw().windows.add(window);
-                WinDraw().activeWindow = window;
-                var pWindow = WinDraw().activeWindow;
-                pWindow.calculateWinParts();
-                pWindow.frame.computeCells();
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                print(pWindow.toString());
-              },
+  Widget _buildToolButton(IconData icon, String tooltip, VoidCallback onPressed) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
             ),
-            TextButton(
-              child: Text('Change Size'),
-              onPressed: () {
-                /** */
-                var pWindow = WinDraw().activeWindow;
-                pWindow.width = 3000;
-                pWindow.height = 1500;
-                pWindow.calculateWinParts();
-                pWindow.frame.computeVerticalMullion();
-                pWindow.frame.computeCells();
-                print(pWindow.toString());
-              },
-            ),
-            TextButton(
-              child: Text('Json'),
-              onPressed: () {
-                /** */
-                var pWindow = WinDraw().activeWindow;
-                String pdata = pWindow.toJson();
-                var zwindow = PWindow.fromJson(pdata);
-                WinDraw().windows.clear();
-                WinDraw().windows.add(zwindow);
-                WinDraw().activeWindow = zwindow;
-
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                print(zwindow.toString());
-              },
-            ),
-            TextButton(
-              child: Text('Json2'),
-              onPressed: () {
-                /** */
-                data = WinDraw().toJson();
-                print(data);
-                WinDraw().windows.clear();
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                //print(zwindow.toString());
-              },
-            ),
-            TextButton(
-              child: Text('Json3'),
-              onPressed: () {
-                /** */
-                WinDraw().fromJson(data);
-                WinDraw().activeWindow = WinDraw().windows[0];
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                //print(zwindow.toString());
-              },
-            ),
-            TextButton(
-              child: Text('Json4'),
-              onPressed: () {
-                /** */
-                WinDraw().fromJson(data);
-                WinDraw().activeWindow = WinDraw().windows[0];
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                //print(zwindow.toString());
-              },
-            ),
-            TextButton(
-              child: Text('Add Mullion'),
-              onPressed: () {
-                /** */
-                var pWindow = WinDraw().activeWindow;
-                pWindow.calculateWinParts();
-                pWindow.frame.addVerticalCenterMullion(
-                    WinDraw().testwin.mullionProfile, 2);
-                pWindow.frame.computeVerticalMullion();
-                pWindow.frame.computeCells();
-                //createDefautUnit(pWindow.frame.cells);
-                //pWindow.frame.createCellUnit("cam01", "çift cam", 90);
-                for (var icell in pWindow.frame.cells) {
-                  icell.addHorizontalMullion(
-                      WinDraw().testwin.mullionProfile, [500]);
-                  icell.computeHorizontalMullion();
-                  icell.computeCells();
-                }
-
-                for (var icell in pWindow.frame.cells) {
-                  var j = 0;
-                  for (var jcell in icell.cells) {
-                    if (j == 0)
-                      jcell.createCellUnit("cam01", "çift cam", 90);
-                    else
-                      jcell.createSashCell(WinDraw().testwin.sashProfile,
-                          "rightdouble", 8, "cam01", "çift cam", 90);
-                    ++j;
-                  }
-                }
-
-                print("Hücreler");
-                for (var c1 in pWindow.frame.cells) {
-                  print(c1);
-                  printCell(c1);
-                  print(c1.unit);
-                  print(c1.sash);
-                  print(c1.sash?.unit);
-                                }
-              },
-            ),
-          ],
+          ),
+          child: Icon(
+            icon,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
     );
   }
 
-  printCell(Wincell cell) {
-    if (cell.cells.length != 0) {
-      for (var mullion in cell.mullions) {
-        print(mullion.toString());
-      }
-      for (var icell in cell.cells) {
-        print(icell);
-        printCell(icell);
-        print(icell.unit);
-              print(icell.sash);
-        print(icell.sash?.unit);
-            }
-    }
-  }
-
-  createDefautUnit(List<Wincell> cells) {
-    if (cells.isNotEmpty)
-      for (var cell in cells) {
-        cell.createCellUnit("cam01", "çift cam", 90);
-        createDefautUnit(cell.cells);
-      }
-  }
-
-  Widget getCanvas(Size mediaSize, double toolbarHeight) {
-    Size sizeCanvas =
-        Size(mediaSize.width, mediaSize.height - (toolbarHeight + menuHeight));
-    return Container(
-      constraints: BoxConstraints(
-          maxWidth: sizeCanvas.width, maxHeight: sizeCanvas.height),
-      color: Colors.grey,
-      child: GestureDetector(
-        onScaleStart: (_) {},
-        onScaleUpdate: (_) {},
-        onScaleEnd: (_) {},
-        child: CustomPaint(
-          size: sizeCanvas,
-          painter: this.winPainter = WinPainter(context),
+  Widget _buildPropertyRow(String label, String value) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
         ),
-      ),
+        Expanded(
+          flex: 3,
+          child: Container(
+            height: 32,
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Theme.of(context).dividerColor),
+            ),
+            child: Text(value),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showNewWindowDialog() async {
+    final widthController = TextEditingController();
+    final heightController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create New Window'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: widthController,
+                decoration: const InputDecoration(labelText: 'Width (mm)', hintText: '3000'),
+                keyboardType: TextInputType.number,
+                autofocus: true,
+              ),
+              TextField(
+                controller: heightController,
+                decoration: const InputDecoration(labelText: 'Height (mm)', hintText: '1500'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Create'),
+              onPressed: () {
+                double width = double.tryParse(widthController.text) ?? 3000;
+                double height = double.tryParse(heightController.text) ?? 1500;
+                
+                var frameProfile = WinDraw().testwin.frameProfile;
+                WinDraw().windows.clear();
+                var window = new PWindow.create(2, 1, frameProfile, width, height);
+                WinDraw().windows.add(window);
+                WinDraw().activeWindow = window;
+                var pWindow = WinDraw().activeWindow;
+                pWindow.calculateWinParts();
+                pWindow.frame.computeCells();
+                setState(() {});
+                
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

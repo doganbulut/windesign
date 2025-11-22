@@ -5,6 +5,8 @@ import 'ui/screens/manufacturer/manufacturerlist.dart';
 import 'ui/screens/windraw_view.dart';
 import 'windrawer/windraw.dart';
 
+import 'package:windesign/ui/theme/app_theme.dart';
+
 /// main is entry point of Flutter application
 void main() {
   LngHelper().initLanguage('tr');
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.red)),
+      theme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       home: WinDrawView(),
     );

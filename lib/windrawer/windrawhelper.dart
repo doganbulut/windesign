@@ -74,12 +74,12 @@ class WinDrawHelper {
 
     //SOL
     Paint paintSolContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSolColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -92,12 +92,12 @@ class WinDrawHelper {
     //ALT
 
     Paint paintAltContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintAltColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -110,12 +110,12 @@ class WinDrawHelper {
     //SAG
 
     Paint paintSagContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSagColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -127,12 +127,12 @@ class WinDrawHelper {
 
     //UST
     Paint paintUstContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintUstColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -172,12 +172,12 @@ class WinDrawHelper {
 
     //SOL
     Paint paintSolContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSolColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -189,12 +189,12 @@ class WinDrawHelper {
 
     //ALT
     Paint paintAltContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintAltColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -206,12 +206,12 @@ class WinDrawHelper {
 
     //SAG
     Paint paintSagContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSagColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -223,12 +223,12 @@ class WinDrawHelper {
 
     //UST
     Paint paintUstContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintUstColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -240,7 +240,7 @@ class WinDrawHelper {
 
     //Kol Çiz
     Paint paintKol = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
@@ -310,7 +310,7 @@ class WinDrawHelper {
 
     if (p1 != null && p2 != null && p3 != null) {
       Paint paintGlassLine = new Paint()
-        ..color = Colors.black
+        ..color = Colors.white
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1;
 
@@ -355,12 +355,12 @@ class WinDrawHelper {
 
     //SOL
     Paint paintSolContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSolColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -372,12 +372,12 @@ class WinDrawHelper {
 
     //ALT
     Paint paintAltContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintAltColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -389,12 +389,12 @@ class WinDrawHelper {
 
     //SAG
     Paint paintSagContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSagColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -406,12 +406,12 @@ class WinDrawHelper {
 
     //UST
     Paint paintUstContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintUstColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -467,12 +467,12 @@ class WinDrawHelper {
         // Only draw if all offsets are initialized
         if (m1 != null && m2 != null && m3 != null && m4 != null) {
           Paint paintContour = new Paint()
-            ..color = Colors.black
+            ..color = Colors.white
             ..style = PaintingStyle.stroke
             ..strokeWidth = 0;
 
           Paint paintColor = new Paint()
-            ..color = Colors.white
+            ..color = Color(0xFF424242)
             ..style = PaintingStyle.fill
             ..strokeWidth = 0;
 
@@ -538,12 +538,12 @@ class WinDrawHelper {
 
     //SOL
     Paint paintSolContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSolColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -555,12 +555,12 @@ class WinDrawHelper {
 
     //ALT
     Paint paintAltContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintAltColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -572,12 +572,12 @@ class WinDrawHelper {
 
     //SAG
     Paint paintSagContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintSagColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -589,12 +589,12 @@ class WinDrawHelper {
 
     //UST
     Paint paintUstContour = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0;
 
     Paint paintUstColor = new Paint()
-      ..color = Colors.white
+      ..color = Color(0xFF424242)
       ..style = PaintingStyle.fill
       ..strokeWidth = 0;
 
@@ -608,7 +608,7 @@ class WinDrawHelper {
   drawFrameHeightRuler(
       Canvas canvas, Offset startPoint, endPoint, double len) {
     Paint paintline = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
 
@@ -627,7 +627,7 @@ class WinDrawHelper {
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.right));
     builder.pushStyle(ui.TextStyle(
         background: paintForeground,
-        color: Colors.black,
+        color: Colors.white,
         fontSize: this.fontSize * 1.5));
     builder.addText(len.toString());
     final paragraph = builder.build();
@@ -642,7 +642,7 @@ class WinDrawHelper {
   drawFrameWidthRuler(
       Canvas canvas, Offset startPoint, endPoint, double len) {
     Paint paintline = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
 
@@ -661,7 +661,7 @@ class WinDrawHelper {
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
     builder.pushStyle(ui.TextStyle(
         background: paintForeground,
-        color: Colors.black,
+        color: Colors.white,
         fontSize: this.fontSize * 1.5));
     builder.addText(len.toString());
     final paragraph = builder.build();
@@ -675,7 +675,7 @@ class WinDrawHelper {
 
   drawVerticalMullionRuler(Canvas canvas, Offset startPoint, double len) {
     Paint paintline = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
 
@@ -691,7 +691,7 @@ class WinDrawHelper {
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
     builder.pushStyle(ui.TextStyle(
         background: paintForeground,
-        color: Colors.black,
+        color: Colors.white,
         fontSize: this.fontSize));
     builder.addText(len.toString());
     final paragraph = builder.build();
@@ -705,7 +705,7 @@ class WinDrawHelper {
   drawHorizontalMullionRuler(
       Canvas canvas, Offset startPoint, double len) {
     Paint paintline = new Paint()
-      ..color = Colors.black
+      ..color = Colors.white
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
 
@@ -721,7 +721,7 @@ class WinDrawHelper {
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left));
     builder.pushStyle(ui.TextStyle(
         background: paintForeground,
-        color: Colors.black,
+        color: Colors.white,
         fontSize: this.fontSize));
     builder.addText(len.toString());
     final paragraph = builder.build();
